@@ -28,9 +28,6 @@ extern lv_meter_indicator_t* line_indic;
 LV_IMG_DECLARE(ui_img_miku1_png);    // assets\miku1.png
 LV_IMG_DECLARE(ui_img_onion2_png);    // assets\onion2.png
 
-
-
-
 void ui_init(void);
 
 #ifdef __cplusplus
