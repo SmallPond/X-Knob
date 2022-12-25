@@ -8,5 +8,6 @@
 #define TFT_DC 14
 #define TFT_RST 9
 
+#define PUSH_BUTTON_PIN 5
 
 #endif 

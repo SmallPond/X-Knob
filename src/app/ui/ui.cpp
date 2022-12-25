@@ -179,7 +179,7 @@ void ui_init(void)
     ui_Screen2_screen_init();
     lv_disp_load_scr(ui_Screen1);
 
-    lv_img_set_pivot(ui_Image2, 16, 120); /*Rotate around the top left corner*/
-    lv_meter_set_indicator_value(meter, line_indic, 50);
+    // lv_img_set_pivot(ui_Image2, 16, 120); /*Rotate around the top left corner*/
+    // lv_meter_set_indicator_value(meter, line_indic, 50);
 }
 
