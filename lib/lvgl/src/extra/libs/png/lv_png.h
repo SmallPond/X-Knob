@@ -29,7 +29,7 @@ extern "C" {
  **********************/
 
 /**
- * Register the PNG decoder functions in LVGL
+ * Register the PNG decoder functions in LittlevGL
  */
 void lv_png_init(void);
 

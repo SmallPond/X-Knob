@@ -8,16 +8,12 @@
  *********************/
 #include "../../../lvgl.h"
 
-#if LV_USE_FS_FATFS
+#if LV_USE_FS_FATFS != '\0'
 #include "ff.h"
 
 /*********************
  *      DEFINES
  *********************/
-
-#if LV_FS_FATFS_LETTER == '\0'
-    #error "LV_FS_FATFS_LETTER must be an upper case ASCII letter"
-#endif
 
 /**********************
  *      TYPEDEFS
@@ -58,7 +54,7 @@ void lv_fs_fatfs_init(void)
     fs_init();
 
     /*---------------------------------------------------
-     * Register the file system interface in LVGL
+     * Register the file system interface in LittlevGL
      *--------------------------------------------------*/
 
     /*Add a simple drive to open images*/
@@ -66,9 +62,7 @@ void lv_fs_fatfs_init(void)
     lv_fs_drv_init(&fs_drv);
 
     /*Set up fields...*/
-    fs_drv.letter = LV_FS_FATFS_LETTER;
-    fs_drv.cache_size = LV_FS_FATFS_CACHE_SIZE;
-
+    fs_drv.letter = LV_USE_FS_FATFS;
     fs_drv.open_cb = fs_open;
     fs_drv.close_cb = fs_close;
     fs_drv.read_cb = fs_read;
@@ -116,8 +110,7 @@ static void * fs_open(lv_fs_drv_t * drv, const char * path, lv_fs_mode_t mode)
     FRESULT res = f_open(f, path, flags);
     if(res == FR_OK) {
         return f;
-    }
-    else {
+    } else {
         lv_mem_free(f);
         return NULL;
     }
@@ -161,8 +154,8 @@ static lv_fs_res_t fs_read(lv_fs_drv_t * drv, void * file_p, void * buf, uint32_
  * @param drv pointer to a driver where this function belongs
  * @param file_p pointer to a FIL variable
  * @param buf pointer to a buffer with the bytes to write
- * @param btw Bytes To Write
- * @param bw the number of real written bytes (Bytes Written). NULL if unused.
+ * @param btr Bytes To Write
+ * @param br the number of real written bytes (Bytes Written). NULL if unused.
  * @return LV_FS_RES_OK or any error from lv_fs_res_t enum
  */
 static lv_fs_res_t fs_write(lv_fs_drv_t * drv, void * file_p, const void * buf, uint32_t btw, uint32_t * bw)
@@ -185,18 +178,18 @@ static lv_fs_res_t fs_write(lv_fs_drv_t * drv, void * file_p, const void * buf, 
 static lv_fs_res_t fs_seek(lv_fs_drv_t * drv, void * file_p, uint32_t pos, lv_fs_whence_t whence)
 {
     LV_UNUSED(drv);
-    switch(whence) {
-        case LV_FS_SEEK_SET:
-            f_lseek(file_p, pos);
-            break;
-        case LV_FS_SEEK_CUR:
-            f_lseek(file_p, f_tell((FIL *)file_p) + pos);
-            break;
-        case LV_FS_SEEK_END:
-            f_lseek(file_p, f_size((FIL *)file_p) + pos);
-            break;
-        default:
-            break;
+    switch (whence) {
+    case LV_FS_SEEK_SET:
+        f_lseek(file_p, pos);
+        break;
+    case LV_FS_SEEK_CUR:
+        f_lseek(file_p, f_tell(file_p) + pos);
+        break;
+    case LV_FS_SEEK_END:
+        f_lseek(file_p, f_size(file_p) + pos);
+        break;
+    default:
+        break;
     }
     return LV_FS_RES_OK;
 }
@@ -212,7 +205,7 @@ static lv_fs_res_t fs_seek(lv_fs_drv_t * drv, void * file_p, uint32_t pos, lv_fs
 static lv_fs_res_t fs_tell(lv_fs_drv_t * drv, void * file_p, uint32_t * pos_p)
 {
     LV_UNUSED(drv);
-    *pos_p = f_tell((FIL *)file_p);
+    *pos_p = f_tell(file_p);
     return LV_FS_RES_OK;
 }
 
@@ -280,11 +273,4 @@ static lv_fs_res_t fs_dir_close(lv_fs_drv_t * drv, void * dir_p)
     return LV_FS_RES_OK;
 }
 
-#else /*LV_USE_FS_FATFS == 0*/
-
-#if defined(LV_FS_FATFS_LETTER) && LV_FS_FATFS_LETTER != '\0'
-    #warning "LV_USE_FS_FATFS is not enabled but LV_FS_FATFS_LETTER is set"
-#endif
-
-#endif /*LV_USE_FS_POSIX*/
-
+#endif  /*LV_USE_FS_FATFS*/

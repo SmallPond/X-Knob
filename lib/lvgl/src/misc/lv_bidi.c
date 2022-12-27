@@ -339,7 +339,7 @@ static uint32_t lv_bidi_get_next_paragraph(const char * txt)
 
 /**
  * Get the direction of a character
- * @param letter a Unicode character
+ * @param letter an Unicode character
  * @return `LV_BASE_DIR_RTL/LTR/WEAK/NEUTRAL`
  */
 static lv_base_dir_t lv_bidi_get_letter_dir(uint32_t letter)
@@ -352,7 +352,7 @@ static lv_base_dir_t lv_bidi_get_letter_dir(uint32_t letter)
 }
 /**
  * Tell whether a character is weak or not
- * @param letter a Unicode character
+ * @param letter an Unicode character
  * @return true/false
  */
 static bool lv_bidi_letter_is_weak(uint32_t letter)
@@ -371,7 +371,7 @@ static bool lv_bidi_letter_is_weak(uint32_t letter)
 }
 /**
  * Tell whether a character is RTL or not
- * @param letter a Unicode character
+ * @param letter an Unicode character
  * @return true/false
  */
 static bool lv_bidi_letter_is_rtl(uint32_t letter)
@@ -389,7 +389,7 @@ static bool lv_bidi_letter_is_rtl(uint32_t letter)
 
 /**
  * Tell whether a character is neutral or not
- * @param letter a Unicode character
+ * @param letter an Unicode character
  * @return true/false
  */
 static bool lv_bidi_letter_is_neutral(uint32_t letter)
@@ -440,13 +440,13 @@ static lv_base_dir_t get_next_run(const char * txt, lv_base_dir_t base_dir, uint
     /*Find the first strong char. Skip the neutrals*/
     while(dir == LV_BASE_DIR_NEUTRAL || dir == LV_BASE_DIR_WEAK) {
         letter = _lv_txt_encoded_next(txt, &i);
-
+        
         pos_conv_i++;
         dir = lv_bidi_get_letter_dir(letter);
         if(dir == LV_BASE_DIR_NEUTRAL)  dir = bracket_process(txt, i, max_len, letter, base_dir);
-
-        if(dir == LV_BASE_DIR_LTR || dir == LV_BASE_DIR_RTL)  break;
-
+ 
+        if(dir==LV_BASE_DIR_LTR || dir==LV_BASE_DIR_RTL)  break;
+         
         if(i >= max_len || txt[i] == '\0' || txt[i] == '\n' || txt[i] == '\r') {
             *len = i;
             *pos_conv_len = pos_conv_i;
@@ -468,14 +468,14 @@ static lv_base_dir_t get_next_run(const char * txt, lv_base_dir_t base_dir, uint
         pos_conv_i++;
         next_dir  = lv_bidi_get_letter_dir(letter);
         if(next_dir == LV_BASE_DIR_NEUTRAL)  next_dir = bracket_process(txt, i, max_len, letter, base_dir);
-
-        if(next_dir == LV_BASE_DIR_WEAK) {
-            if(run_dir == LV_BASE_DIR_RTL) {
-                if(base_dir == LV_BASE_DIR_RTL) {
-                    next_dir = LV_BASE_DIR_LTR;
-                }
-            }
-        }
+   
+        if(next_dir == LV_BASE_DIR_WEAK){
+             if(run_dir == LV_BASE_DIR_RTL){
+                 if(base_dir == LV_BASE_DIR_RTL){
+                     next_dir = LV_BASE_DIR_LTR;
+                 }
+             }
+         }
 
         /*New dir found?*/
         if((next_dir == LV_BASE_DIR_RTL || next_dir == LV_BASE_DIR_LTR) && next_dir != run_dir) {

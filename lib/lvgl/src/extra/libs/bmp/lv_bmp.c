@@ -36,7 +36,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc)
 
 
 static lv_res_t decoder_read_line(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc,
-                                  lv_coord_t x, lv_coord_t y, lv_coord_t len, uint8_t * buf);
+                                                 lv_coord_t x, lv_coord_t y, lv_coord_t len, uint8_t * buf);
 
 static void decoder_close(lv_img_decoder_t * dec, lv_img_decoder_dsc_t * dsc);
 
@@ -79,7 +79,7 @@ static lv_res_t decoder_info(lv_img_decoder_t * decoder, const void * src, lv_im
     /*If it's a BMP file...*/
     if(src_type == LV_IMG_SRC_FILE) {
         const char * fn = src;
-        if(strcmp(lv_fs_get_ext(fn), "bmp") == 0) {              /*Check the extension*/
+        if(!strcmp(&fn[strlen(fn) - 3], "bmp")) {              /*Check the extension*/
             /*Save the data in the header*/
             lv_fs_file_t f;
             lv_fs_res_t res = lv_fs_open(&f, src, LV_FS_MODE_RD);
@@ -119,7 +119,7 @@ static lv_res_t decoder_info(lv_img_decoder_t * decoder, const void * src, lv_im
  * Open a PNG image and return the decided image
  * @param src can be file name or pointer to a C array
  * @param style style of the image object (unused now but certain formats might use it)
- * @return pointer to the decoded image or `LV_IMG_DECODER_OPEN_FAIL` if failed
+ * @return pointer to the decoded image or  `LV_IMG_DECODER_OPEN_FAIL` if failed
  */
 static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc)
 {
@@ -129,9 +129,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
     if(dsc->src_type == LV_IMG_SRC_FILE) {
         const char * fn = dsc->src;
 
-        if(strcmp(lv_fs_get_ext(fn), "bmp") != 0) {
-            return LV_RES_INV;       /*Check the extension*/
-        }
+        if(strcmp(&fn[strlen(fn) - 3], "bmp")) return LV_RES_INV;       /*Check the extension*/
 
         bmp_dsc_t b;
         memset(&b, 0x00, sizeof(b));
@@ -142,8 +140,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
         uint8_t header[54];
         lv_fs_read(&b.f, header, 54, NULL);
 
-        if(0x42 != header[0] || 0x4d != header[1]) {
-            lv_fs_close(&b.f);
+        if (0x42 != header[0] || 0x4d != header[1]) {
             return LV_RES_INV;
         }
 
@@ -152,26 +149,6 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
         memcpy(&b.px_height, header + 22, 4);
         memcpy(&b.bpp, header + 28, 2);
         b.row_size_bytes = ((b.bpp * b.px_width + 31) / 32) * 4;
-
-        bool color_depth_error = false;
-        if(LV_COLOR_DEPTH == 32 && (b.bpp != 32 && b.bpp != 24)) {
-            LV_LOG_WARN("LV_COLOR_DEPTH == 32 but bpp is %d (should be 32 or 24)", b.bpp);
-            color_depth_error = true;
-        }
-        else if(LV_COLOR_DEPTH == 16 && b.bpp != 16) {
-            LV_LOG_WARN("LV_COLOR_DEPTH == 16 but bpp is %d (should be 16)", b.bpp);
-            color_depth_error = true;
-        }
-        else if(LV_COLOR_DEPTH == 8 && b.bpp != 8) {
-            LV_LOG_WARN("LV_COLOR_DEPTH == 8 but bpp is %d (should be 8)", b.bpp);
-            color_depth_error = true;
-        }
-
-        if(color_depth_error) {
-            dsc->error_msg = "Color depth mismatch";
-            lv_fs_close(&b.f);
-            return LV_RES_INV;
-        }
 
         dsc->user_data = lv_mem_alloc(sizeof(bmp_dsc_t));
         LV_ASSERT_MALLOC(dsc->user_data);
@@ -192,7 +169,7 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
 
 static lv_res_t decoder_read_line(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc,
-                                  lv_coord_t x, lv_coord_t y, lv_coord_t len, uint8_t * buf)
+                                                 lv_coord_t x, lv_coord_t y, lv_coord_t len, uint8_t * buf)
 {
     LV_UNUSED(decoder);
 
@@ -203,14 +180,7 @@ static lv_res_t decoder_read_line(lv_img_decoder_t * decoder, lv_img_decoder_dsc
     lv_fs_seek(&b->f, p, LV_FS_SEEK_SET);
     lv_fs_read(&b->f, buf, len * (b->bpp / 8), NULL);
 
-#if LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 1
-    for(unsigned int i = 0; i < len * (b->bpp / 8); i += 2) {
-        buf[i] = buf[i] ^ buf[i + 1];
-        buf[i + 1] = buf[i] ^ buf[i + 1];
-        buf[i] = buf[i] ^ buf[i + 1];
-    }
-
-#elif LV_COLOR_DEPTH == 32
+#if LV_COLOR_DEPTH == 32
     if(b->bpp == 32) {
         lv_coord_t i;
         for(i = 0; i < len; i++) {
@@ -218,7 +188,7 @@ static lv_res_t decoder_read_line(lv_img_decoder_t * decoder, lv_img_decoder_dsc
             uint8_t b1 = buf[i * 4 + 1];
             uint8_t b2 = buf[i * 4 + 2];
             uint8_t b3 = buf[i * 4 + 3];
-            lv_color32_t * c = (lv_color32_t *)&buf[i * 4];
+            lv_color32_t *c = (lv_color32_t*)&buf[i*4];
             c->ch.red = b2;
             c->ch.green = b1;
             c->ch.blue = b0;
@@ -230,7 +200,7 @@ static lv_res_t decoder_read_line(lv_img_decoder_t * decoder, lv_img_decoder_dsc
 
         for(i = len - 1; i >= 0; i--) {
             uint8_t * t = &buf[i * 3];
-            lv_color32_t * c = (lv_color32_t *)&buf[i * 4];
+            lv_color32_t *c = (lv_color32_t*)&buf[i*4];
             c->ch.red = t[2];
             c->ch.green = t[1];
             c->ch.blue = t[0];

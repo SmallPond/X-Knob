@@ -115,7 +115,7 @@ typedef enum {
  **********************/
 
 /**
- * Create a Meter object
+ * Create a meter objects
  * @param parent pointer to an object, it will be the parent of the new bar.
  * @return pointer to the created meter
  */

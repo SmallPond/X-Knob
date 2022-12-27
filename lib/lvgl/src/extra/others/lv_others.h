@@ -14,12 +14,6 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "snapshot/lv_snapshot.h"
-#include "monkey/lv_monkey.h"
-#include "gridnav/lv_gridnav.h"
-#include "fragment/lv_fragment.h"
-#include "imgfont/lv_imgfont.h"
-#include "msg/lv_msg.h"
-#include "ime/lv_ime_pinyin.h"
 
 /*********************
  *      DEFINES

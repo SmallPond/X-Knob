@@ -15,3 +15,4 @@ obj.add_style(style, 0)
 obj.set_style_bg_color(lv.palette_main(lv.PALETTE.ORANGE), lv.PART.MAIN)
 
 obj.center()
+

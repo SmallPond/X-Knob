@@ -22,6 +22,3 @@ test_screenshot_error.h
 build/
 tests/build_*/
 tests/report/
-.DS_Store
-.vscode
-*.bak

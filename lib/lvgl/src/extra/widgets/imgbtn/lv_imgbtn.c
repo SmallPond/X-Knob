@@ -49,8 +49,8 @@ const lv_obj_class_t lv_imgbtn_class = {
  **********************/
 
 /**
- * Create an image button object
- * @param parent pointer to an object, it will be the parent of the new image button
+ * Create a image button object
+ * @param par pointer to an object, it will be the parent of the new image button
  * @return pointer to the created image button
  */
 lv_obj_t * lv_imgbtn_create(lv_obj_t * parent)
@@ -67,7 +67,7 @@ lv_obj_t * lv_imgbtn_create(lv_obj_t * parent)
 
 /**
  * Set images for a state of the image button
- * @param obj pointer to an image button object
+ * @param imgbtn pointer to an image button object
  * @param state for which state set the new image
  * @param src_left pointer to an image source for the left side of the button (a C array or path to
  * a file)
@@ -92,20 +92,19 @@ void lv_imgbtn_set_src(lv_obj_t * obj, lv_imgbtn_state_t state, const void * src
 
 void lv_imgbtn_set_state(lv_obj_t * obj, lv_imgbtn_state_t state)
 {
-    LV_ASSERT_OBJ(obj, MY_CLASS);
+	LV_ASSERT_OBJ(obj, MY_CLASS);
 
-    lv_state_t obj_state = LV_STATE_DEFAULT;
-    if(state == LV_IMGBTN_STATE_PRESSED || state == LV_IMGBTN_STATE_CHECKED_PRESSED) obj_state |= LV_STATE_PRESSED;
-    if(state == LV_IMGBTN_STATE_DISABLED || state == LV_IMGBTN_STATE_CHECKED_DISABLED) obj_state |= LV_STATE_DISABLED;
-    if(state == LV_IMGBTN_STATE_CHECKED_DISABLED || state == LV_IMGBTN_STATE_CHECKED_PRESSED ||
-       state == LV_IMGBTN_STATE_CHECKED_RELEASED) {
-        obj_state |= LV_STATE_CHECKED;
-    }
+	lv_state_t obj_state = LV_STATE_DEFAULT;
+	if(state == LV_IMGBTN_STATE_PRESSED || state == LV_IMGBTN_STATE_CHECKED_PRESSED) obj_state |= LV_STATE_PRESSED;
+	if(state == LV_IMGBTN_STATE_DISABLED || state == LV_IMGBTN_STATE_CHECKED_DISABLED) obj_state |= LV_STATE_DISABLED;
+	if(state == LV_IMGBTN_STATE_CHECKED_DISABLED || state == LV_IMGBTN_STATE_CHECKED_PRESSED || state == LV_IMGBTN_STATE_CHECKED_RELEASED) {
+		obj_state |= LV_STATE_CHECKED;
+	}
 
-    lv_obj_clear_state(obj, LV_STATE_CHECKED | LV_STATE_PRESSED | LV_STATE_DISABLED);
-    lv_obj_add_state(obj, obj_state);
+	lv_obj_clear_state(obj, LV_STATE_CHECKED | LV_STATE_PRESSED | LV_STATE_DISABLED);
+	lv_obj_add_state(obj, obj_state);
 
-    refr_img(obj);
+	refr_img(obj);
 }
 
 /*=====================
@@ -115,7 +114,7 @@ void lv_imgbtn_set_state(lv_obj_t * obj, lv_imgbtn_state_t state)
 
 /**
  * Get the left image in a given state
- * @param obj pointer to an image button object
+ * @param imgbtn pointer to an image button object
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the left image source (a C array or path to a file)
  */
@@ -130,7 +129,7 @@ const void * lv_imgbtn_get_src_left(lv_obj_t * obj, lv_imgbtn_state_t state)
 
 /**
  * Get the middle image in a given state
- * @param obj pointer to an image button object
+ * @param imgbtn pointer to an image button object
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the middle image source (a C array or path to a file)
  */
@@ -144,7 +143,7 @@ const void * lv_imgbtn_get_src_middle(lv_obj_t * obj, lv_imgbtn_state_t state)
 
 /**
  * Get the right image in a given state
- * @param obj pointer to an image button object
+ * @param imgbtn pointer to an image button object
  * @param state the state where to get the image (from `lv_btn_state_t`) `
  * @return pointer to the left image source (a C array or path to a file)
  */
@@ -211,7 +210,7 @@ static void draw_main(lv_event_t * e)
 {
     lv_obj_t * obj = lv_event_get_target(e);
     lv_imgbtn_t * imgbtn = (lv_imgbtn_t *)obj;
-    lv_draw_ctx_t * draw_ctx = lv_event_get_draw_ctx(e);
+    const lv_area_t * clip_area = lv_event_get_param(e);
 
     /*Just draw_main an image*/
     lv_imgbtn_state_t state  = suggest_state(obj, get_state(obj));
@@ -244,7 +243,7 @@ static void draw_main(lv_event_t * e)
         coords_part.y1 = coords.y1;
         coords_part.x2 = coords.x1 + header.w - 1;
         coords_part.y2 = coords.y1 + header.h - 1;
-        lv_draw_img(draw_ctx, &img_dsc, &coords_part, src);
+        lv_draw_img(&coords_part, clip_area, src, &img_dsc);
     }
 
     src = imgbtn->img_src_right[state];
@@ -255,38 +254,33 @@ static void draw_main(lv_event_t * e)
         coords_part.y1 = coords.y1;
         coords_part.x2 = coords.x2;
         coords_part.y2 = coords.y1 + header.h - 1;
-        lv_draw_img(draw_ctx, &img_dsc, &coords_part, src);
+        lv_draw_img(&coords_part, clip_area, src, &img_dsc);
     }
 
     src = imgbtn->img_src_mid[state];
     if(src) {
-        lv_area_t clip_area_center;
-        clip_area_center.x1 = coords.x1 + left_w;
-        clip_area_center.x2 = coords.x2 - right_w;
-        clip_area_center.y1 = coords.y1;
-        clip_area_center.y2 = coords.y2;
-
+        lv_area_t clip_center_area;
+        clip_center_area.x1 = coords.x1 + left_w;
+        clip_center_area.x2 = coords.x2 - right_w;
+        clip_center_area.y1 = coords.y1;
+        clip_center_area.y2 = coords.y2;
 
         bool comm_res;
-        comm_res = _lv_area_intersect(&clip_area_center, &clip_area_center, draw_ctx->clip_area);
+        comm_res = _lv_area_intersect(&clip_center_area, &clip_center_area, clip_area);
         if(comm_res) {
             lv_coord_t i;
             lv_img_decoder_get_info(src, &header);
-
-            const lv_area_t * clip_area_ori = draw_ctx->clip_area;
-            draw_ctx->clip_area = &clip_area_center;
 
             coords_part.x1 = coords.x1 + left_w;
             coords_part.y1 = coords.y1;
             coords_part.x2 = coords_part.x1 + header.w - 1;
             coords_part.y2 = coords_part.y1 + header.h - 1;
 
-            for(i = coords_part.x1; i < (lv_coord_t)(clip_area_center.x2 + header.w - 1); i += header.w) {
-                lv_draw_img(draw_ctx, &img_dsc, &coords_part, src);
+            for(i = coords_part.x1; i < (lv_coord_t)(clip_center_area.x2 + header.w - 1); i += header.w) {
+                lv_draw_img(&coords_part, &clip_center_area, src, &img_dsc);
                 coords_part.x1 = coords_part.x2 + 1;
                 coords_part.x2 += header.w;
             }
-            draw_ctx->clip_area = clip_area_ori;
         }
     }
 }

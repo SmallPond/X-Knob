@@ -1,5 +1,5 @@
 /**
- * @file lv_bmp.h
+ * @file lv_templ.h
  *
  */
 

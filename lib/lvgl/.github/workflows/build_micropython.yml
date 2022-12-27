@@ -6,10 +6,8 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
     name: Build ${{ matrix.port }} port
     runs-on: ubuntu-latest
-    continue-on-error: true
     strategy:
       matrix:
         port: ['unix', 'esp32', 'stm32', 'rp2']
@@ -19,11 +17,11 @@ jobs:
       run: |
         sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
         sudo apt-get update -y -qq
-        sudo apt-get install libsdl2-dev parallel libfreetype-dev librlottie-dev
+        sudo apt-get install libsdl2-dev parallel
     - name: Clone lv_micropython
       run: |
         git clone https://github.com/lvgl/lv_micropython.git .
-        git checkout release/v8
+        git checkout master
     - name: Initialize lv_bindings submodule
       run: git submodule update --init --recursive lib/lv_bindings
     - name: Update ${{ matrix.port }} port submodules
@@ -44,7 +42,7 @@ jobs:
     - name: Setup ESP-IDF
       if: matrix.port == 'esp32'
       run: |
-        source tools/ci.sh && ci_esp32_idf44_setup
+        source tools/ci.sh && ci_esp32_idf43_setup
     - name: Build ESP32 port
       if: matrix.port == 'esp32'
       run: |
@@ -53,7 +51,7 @@ jobs:
     # STM32 & RPi Pico port
     - name: arm-none-eabi-gcc
       if: matrix.port == 'stm32' || matrix.port == 'rp2'
-      uses: carlosperate/arm-none-eabi-gcc-action@v1.3.0
+      uses: fiam/arm-none-eabi-gcc@v1
       with:
         release: '9-2019-q4' # The arm-none-eabi-gcc release to use.
     - name: Build STM32 port

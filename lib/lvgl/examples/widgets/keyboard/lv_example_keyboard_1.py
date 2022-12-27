@@ -8,8 +8,8 @@ def ta_event_cb(e,kb):
     if code == lv.EVENT.DEFOCUSED:
         kb.set_textarea(None)
         kb.add_flag(lv.obj.FLAG.HIDDEN)
-
-# Create a keyboard to use it with one of the text areas
+        
+# Create a keyboard to use it with an of the text areas
 kb = lv.keyboard(lv.scr_act())
 
 # Create a text area. The keyboard will write here

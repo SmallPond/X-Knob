@@ -19,3 +19,4 @@ style.set_border_side(lv.BORDER_SIDE.BOTTOM | lv.BORDER_SIDE.RIGHT)
 obj = lv.obj(lv.scr_act())
 obj.add_style(style, 0)
 obj.center()
+

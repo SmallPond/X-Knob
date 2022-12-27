@@ -9,7 +9,6 @@
 #include "lv_img.h"
 #if LV_USE_IMG != 0
 
-#include "../core/lv_disp.h"
 #include "../misc/lv_assert.h"
 #include "../draw/lv_img_decoder.h"
 #include "../misc/lv_fs.h"
@@ -135,7 +134,7 @@ void lv_img_set_src(lv_obj_t * obj, const void * src)
     }
 
     if(src_type == LV_IMG_SRC_SYMBOL) {
-        /*`lv_img_dsc_get_info` couldn't set the width and height of a font so set it here*/
+        /*`lv_img_dsc_get_info` couldn't set the with and height of a font so set it here*/
         const lv_font_t * font = lv_obj_get_style_text_font(obj, LV_PART_MAIN);
         lv_coord_t letter_space = lv_obj_get_style_text_letter_space(obj, LV_PART_MAIN);
         lv_coord_t line_space = lv_obj_get_style_text_line_space(obj, LV_PART_MAIN);
@@ -191,11 +190,15 @@ void lv_img_set_angle(lv_obj_t * obj, int16_t angle)
     lv_img_t * img = (lv_img_t *)obj;
     if(angle == img->angle) return;
 
-    lv_obj_update_layout(obj);  /*Be sure the object's size is calculated*/
+    lv_coord_t transf_zoom = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+    transf_zoom = ((int32_t)transf_zoom * img->zoom) >> 8;
+
+    lv_coord_t transf_angle = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+
     lv_coord_t w = lv_obj_get_width(obj);
     lv_coord_t h = lv_obj_get_height(obj);
     lv_area_t a;
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle + img->angle, transf_zoom, &img->pivot);
     a.x1 += obj->coords.x1;
     a.y1 += obj->coords.y1;
     a.x2 += obj->coords.x1;
@@ -203,15 +206,9 @@ void lv_img_set_angle(lv_obj_t * obj, int16_t angle)
     lv_obj_invalidate_area(obj, &a);
 
     img->angle = angle;
-
-    /* Disable invalidations because lv_obj_refresh_ext_draw_size would invalidate
-     * the whole ext draw area */
-    lv_disp_t * disp = lv_obj_get_disp(obj);
-    lv_disp_enable_invalidation(disp, false);
     lv_obj_refresh_ext_draw_size(obj);
-    lv_disp_enable_invalidation(disp, true);
 
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle + img->angle, transf_zoom, &img->pivot);
     a.x1 += obj->coords.x1;
     a.y1 += obj->coords.y1;
     a.x2 += obj->coords.x1;
@@ -224,11 +221,16 @@ void lv_img_set_pivot(lv_obj_t * obj, lv_coord_t x, lv_coord_t y)
     lv_img_t * img = (lv_img_t *)obj;
     if(img->pivot.x == x && img->pivot.y == y) return;
 
-    lv_obj_update_layout(obj);  /*Be sure the object's size is calculated*/
+    lv_coord_t transf_zoom = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+    transf_zoom = ((int32_t)transf_zoom * img->zoom) >> 8;
+
+    lv_coord_t transf_angle = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+    transf_angle += img->angle;
+
     lv_coord_t w = lv_obj_get_width(obj);
     lv_coord_t h = lv_obj_get_height(obj);
     lv_area_t a;
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle, transf_zoom, &img->pivot);
     a.x1 += obj->coords.x1;
     a.y1 += obj->coords.y1;
     a.x2 += obj->coords.x1;
@@ -237,15 +239,9 @@ void lv_img_set_pivot(lv_obj_t * obj, lv_coord_t x, lv_coord_t y)
 
     img->pivot.x = x;
     img->pivot.y = y;
-
-    /* Disable invalidations because lv_obj_refresh_ext_draw_size would invalidate
-     * the whole ext draw area */
-    lv_disp_t * disp = lv_obj_get_disp(obj);
-    lv_disp_enable_invalidation(disp, false);
     lv_obj_refresh_ext_draw_size(obj);
-    lv_disp_enable_invalidation(disp, true);
 
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle, transf_zoom, &img->pivot);
     a.x1 += obj->coords.x1;
     a.y1 += obj->coords.y1;
     a.x2 += obj->coords.x1;
@@ -260,11 +256,15 @@ void lv_img_set_zoom(lv_obj_t * obj, uint16_t zoom)
 
     if(zoom == 0) zoom = 1;
 
-    lv_obj_update_layout(obj);  /*Be sure the object's size is calculated*/
+    lv_coord_t transf_zoom = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+
+    lv_coord_t transf_angle = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+    transf_angle += img->angle;
+
     lv_coord_t w = lv_obj_get_width(obj);
     lv_coord_t h = lv_obj_get_height(obj);
     lv_area_t a;
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom >> 8, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle, ((int32_t)transf_zoom * img->zoom) >> 8, &img->pivot);
     a.x1 += obj->coords.x1 - 1;
     a.y1 += obj->coords.y1 - 1;
     a.x2 += obj->coords.x1 + 1;
@@ -272,15 +272,9 @@ void lv_img_set_zoom(lv_obj_t * obj, uint16_t zoom)
     lv_obj_invalidate_area(obj, &a);
 
     img->zoom = zoom;
-
-    /* Disable invalidations because lv_obj_refresh_ext_draw_size would invalidate
-     * the whole ext draw area */
-    lv_disp_t * disp = lv_obj_get_disp(obj);
-    lv_disp_enable_invalidation(disp, false);
     lv_obj_refresh_ext_draw_size(obj);
-    lv_disp_enable_invalidation(disp, true);
 
-    _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
+    _lv_img_buf_get_transformed_area(&a, w, h, transf_angle, ((int32_t)transf_zoom * img->zoom) >> 8, &img->pivot);
     a.x1 += obj->coords.x1 - 1;
     a.y1 += obj->coords.y1 - 1;
     a.x2 += obj->coords.x1 + 1;
@@ -427,10 +421,14 @@ static lv_point_t lv_img_get_transformed_size(lv_obj_t * obj)
 {
     lv_img_t * img = (lv_img_t *)obj;
 
+    int32_t zoom_final = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+    zoom_final = (zoom_final * img->zoom) >> 8;
+    int32_t angle_final = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+    angle_final += img->angle;
 
     lv_area_t area_transform;
     _lv_img_buf_get_transformed_area(&area_transform, img->w, img->h,
-                                     img->angle, img->zoom, &img->pivot);
+                                     angle_final, zoom_final, &img->pivot);
 
     return (lv_point_t) {
         lv_area_get_width(&area_transform), lv_area_get_height(&area_transform)
@@ -466,31 +464,42 @@ static void lv_img_event(const lv_obj_class_t * class_p, lv_event_t * e)
     else if(code == LV_EVENT_REFR_EXT_DRAW_SIZE) {
 
         lv_coord_t * s = lv_event_get_param(e);
+        lv_coord_t transf_zoom = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+        transf_zoom = ((int32_t)transf_zoom * img->zoom) >> 8;
+
+        lv_coord_t transf_angle = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+        transf_angle += img->angle;
 
         /*If the image has angle provide enough room for the rotated corners*/
-        if(img->angle || img->zoom != LV_IMG_ZOOM_NONE) {
+        if(transf_angle || transf_zoom != LV_IMG_ZOOM_NONE) {
             lv_area_t a;
             lv_coord_t w = lv_obj_get_width(obj);
             lv_coord_t h = lv_obj_get_height(obj);
-            _lv_img_buf_get_transformed_area(&a, w, h, img->angle, img->zoom, &img->pivot);
-            *s = LV_MAX(*s, -a.x1);
-            *s = LV_MAX(*s, -a.y1);
-            *s = LV_MAX(*s, a.x2 - w);
-            *s = LV_MAX(*s, a.y2 - h);
+            _lv_img_buf_get_transformed_area(&a, w, h, transf_angle, transf_zoom, &img->pivot);
+            lv_coord_t pad_ori = *s;
+            *s = LV_MAX(*s, pad_ori - a.x1);
+            *s = LV_MAX(*s, pad_ori - a.y1);
+            *s = LV_MAX(*s, pad_ori + a.x2 - w);
+            *s = LV_MAX(*s, pad_ori + a.y2 - h);
         }
     }
     else if(code == LV_EVENT_HIT_TEST) {
         lv_hit_test_info_t * info = lv_event_get_param(e);
+        lv_coord_t zoom = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+        zoom = (zoom * img->zoom) >> 8;
+
+        lv_coord_t angle = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+        angle += img->angle;
 
         /*If the object is exactly image sized (not cropped, not mosaic) and transformed
          *perform hit test on its transformed area*/
         if(img->w == lv_obj_get_width(obj) && img->h == lv_obj_get_height(obj) &&
-           (img->zoom != LV_IMG_ZOOM_NONE || img->angle != 0 || img->pivot.x != img->w / 2 || img->pivot.y != img->h / 2)) {
+           (zoom != LV_IMG_ZOOM_NONE || angle != 0 || img->pivot.x != img->w / 2 || img->pivot.y != img->h / 2)) {
 
             lv_coord_t w = lv_obj_get_width(obj);
             lv_coord_t h = lv_obj_get_height(obj);
             lv_area_t coords;
-            _lv_img_buf_get_transformed_area(&coords, w, h, img->angle, img->zoom, &img->pivot);
+            _lv_img_buf_get_transformed_area(&coords, w, h, angle, zoom, &img->pivot);
             coords.x1 += obj->coords.x1;
             coords.y1 += obj->coords.y1;
             coords.x2 += obj->coords.x1;
@@ -544,13 +553,19 @@ static void draw_img(lv_event_t * e)
             return;
         }
 
-        if(img->angle != 0) {
+        int32_t angle_final = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+        angle_final += img->angle;
+
+        if(angle_final != 0) {
             info->res = LV_COVER_RES_NOT_COVER;
             return;
         }
 
+        int32_t zoom_final = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+        zoom_final = (zoom_final * img->zoom) >> 8;
+
         const lv_area_t * clip_area = lv_event_get_param(e);
-        if(img->zoom == LV_IMG_ZOOM_NONE) {
+        if(zoom_final == LV_IMG_ZOOM_NONE) {
             if(_lv_area_is_in(clip_area, &obj->coords, 0) == false) {
                 info->res = LV_COVER_RES_NOT_COVER;
                 return;
@@ -558,7 +573,7 @@ static void draw_img(lv_event_t * e)
         }
         else {
             lv_area_t a;
-            _lv_img_buf_get_transformed_area(&a, lv_obj_get_width(obj), lv_obj_get_height(obj), 0, img->zoom, &img->pivot);
+            _lv_img_buf_get_transformed_area(&a, lv_obj_get_width(obj), lv_obj_get_height(obj), 0, zoom_final, &img->pivot);
             a.x1 += obj->coords.x1;
             a.y1 += obj->coords.y1;
             a.x2 += obj->coords.x1;
@@ -571,6 +586,12 @@ static void draw_img(lv_event_t * e)
         }
     }
     else if(code == LV_EVENT_DRAW_MAIN || code == LV_EVENT_DRAW_POST) {
+
+        int32_t zoom_final = lv_obj_get_style_transform_zoom(obj, LV_PART_MAIN);
+        zoom_final = (zoom_final * img->zoom) >> 8;
+
+        int32_t angle_final = lv_obj_get_style_transform_angle(obj, LV_PART_MAIN);
+        angle_final += img->angle;
 
         lv_coord_t obj_w = lv_obj_get_width(obj);
         lv_coord_t obj_h = lv_obj_get_height(obj);
@@ -592,7 +613,7 @@ static void draw_img(lv_event_t * e)
         }
         else {
             _lv_img_buf_get_transformed_area(&bg_coords, obj_w, obj_h,
-                                             img->angle, img->zoom, &bg_pivot);
+                                             angle_final, zoom_final, &bg_pivot);
 
             /*Modify the coordinates to draw the background for the rotated and scaled coordinates*/
             bg_coords.x1 += obj->coords.x1;
@@ -612,9 +633,9 @@ static void draw_img(lv_event_t * e)
 
         if(code == LV_EVENT_DRAW_MAIN) {
             if(img->h == 0 || img->w == 0) return;
-            if(img->zoom == 0) return;
+            if(zoom_final == 0) return;
 
-            lv_draw_ctx_t * draw_ctx = lv_event_get_draw_ctx(e);
+            const lv_area_t * clip_area = lv_event_get_param(e);
 
             lv_area_t img_max_area;
             lv_area_copy(&img_max_area, &obj->coords);
@@ -642,8 +663,8 @@ static void draw_img(lv_event_t * e)
                 lv_draw_img_dsc_init(&img_dsc);
                 lv_obj_init_draw_img_dsc(obj, LV_PART_MAIN, &img_dsc);
 
-                img_dsc.zoom = img->zoom;
-                img_dsc.angle = img->angle;
+                img_dsc.zoom = zoom_final;
+                img_dsc.angle = angle_final;
                 img_dsc.pivot.x = img->pivot.x;
                 img_dsc.pivot.y = img->pivot.y;
                 img_dsc.antialias = img->antialias;
@@ -653,10 +674,8 @@ static void draw_img(lv_event_t * e)
                 img_clip_area.y1 = bg_coords.y1 + ptop;
                 img_clip_area.x2 = bg_coords.x2 - pright;
                 img_clip_area.y2 = bg_coords.y2 - pbottom;
-                const lv_area_t * clip_area_ori = draw_ctx->clip_area;
 
-                if(!_lv_area_intersect(&img_clip_area, draw_ctx->clip_area, &img_clip_area)) return;
-                draw_ctx->clip_area = &img_clip_area;
+                _lv_area_intersect(&img_clip_area, clip_area, &img_clip_area);
 
                 lv_area_t coords_tmp;
                 coords_tmp.y1 = img_max_area.y1 + img->offset.y;
@@ -669,22 +688,21 @@ static void draw_img(lv_event_t * e)
                     coords_tmp.x2 = coords_tmp.x1 + img->w - 1;
 
                     for(; coords_tmp.x1 < img_max_area.x2; coords_tmp.x1 += img_size_final.x, coords_tmp.x2 += img_size_final.x) {
-                        lv_draw_img(draw_ctx, &img_dsc, &coords_tmp, img->src);
+                        lv_draw_img(&coords_tmp, &img_clip_area, img->src, &img_dsc);
                     }
                 }
-                draw_ctx->clip_area = clip_area_ori;
             }
             else if(img->src_type == LV_IMG_SRC_SYMBOL) {
                 lv_draw_label_dsc_t label_dsc;
                 lv_draw_label_dsc_init(&label_dsc);
                 lv_obj_init_draw_label_dsc(obj, LV_PART_MAIN, &label_dsc);
 
-                lv_draw_label(draw_ctx, &label_dsc, &obj->coords, img->src, NULL);
+                lv_draw_label(&obj->coords, clip_area, &label_dsc, img->src, NULL);
             }
             else {
                 /*Trigger the error handler of image draw*/
                 LV_LOG_WARN("draw_img: image source type is unknown");
-                lv_draw_img(draw_ctx, NULL, &obj->coords, NULL);
+                lv_draw_img(&obj->coords, clip_area, NULL, NULL);
             }
         }
     }

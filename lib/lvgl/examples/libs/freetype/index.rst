@@ -1,4 +1,4 @@
-Open a front with FreeType
+Open a front with FreeTpye
 """""""""""""""""""""""""""""""""""""""""""""""
 
 .. lv_example:: libs/freetype/lv_example_freetype_1

@@ -46,7 +46,7 @@ extern const lv_obj_class_t lv_templ_class;
  **********************/
 
 /**
- * Create a templ object
+ * Create a templ objects
  * @param parent    pointer to an object, it will be the parent of the new templ
  * @return          pointer to the created bar
  */

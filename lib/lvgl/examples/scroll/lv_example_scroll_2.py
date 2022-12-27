@@ -21,7 +21,7 @@ panel.set_scroll_snap_x(lv.SCROLL_SNAP.CENTER)
 panel.set_flex_flow(lv.FLEX_FLOW.ROW)
 panel.center()
 
-for i in range(10):
+for i in range(10): 
     btn = lv.btn(panel)
     btn.set_size(150, 100)
 
@@ -37,7 +37,7 @@ panel.update_snap(lv.ANIM.ON)
 
 
 # Switch between "One scroll" and "Normal scroll" mode
-sw = lv.switch(lv.scr_act())
+sw = lv.switch(lv.scr_act());
 sw.align(lv.ALIGN.TOP_RIGHT, -20, 10)
 sw.add_event_cb(lambda evt:  sw_event_cb(evt,panel), lv.EVENT.ALL, None)
 label = lv.label(lv.scr_act())

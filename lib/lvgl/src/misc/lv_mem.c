@@ -55,8 +55,6 @@
  **********************/
 #if LV_MEM_CUSTOM == 0
     static lv_tlsf_t tlsf;
-    static uint32_t cur_used;
-    static uint32_t max_used;
 #endif
 
 static uint32_t zero_mem = ZERO_MEM_SENTINEL; /*Give the address of this variable if 0 byte should be allocated*/
@@ -137,14 +135,12 @@ void * lv_mem_alloc(size_t size)
 #endif
 
     if(alloc == NULL) {
-        LV_LOG_INFO("couldn't allocate memory (%lu bytes)", (unsigned long)size);
-#if LV_LOG_LEVEL <= LV_LOG_LEVEL_INFO
+        LV_LOG_ERROR("couldn't allocate memory (%lu bytes)", (unsigned long)size);
         lv_mem_monitor_t mon;
         lv_mem_monitor(&mon);
-        LV_LOG_INFO("used: %6d (%3d %%), frag: %3d %%, biggest free: %6d",
-                    (int)(mon.total_size - mon.free_size), mon.used_pct, mon.frag_pct,
-                    (int)mon.free_biggest_size);
-#endif
+        LV_LOG_ERROR("used: %6d (%3d %%), frag: %3d %%, biggest free: %6d",
+                     (int)(mon.total_size - mon.free_size), mon.used_pct, mon.frag_pct,
+                     (int)mon.free_biggest_size);
     }
 #if LV_MEM_ADD_JUNK
     else {
@@ -152,13 +148,7 @@ void * lv_mem_alloc(size_t size)
     }
 #endif
 
-    if(alloc) {
-#if LV_MEM_CUSTOM == 0
-        cur_used += size;
-        max_used = LV_MAX(cur_used, max_used);
-#endif
-        MEM_TRACE("allocated at %p", alloc);
-    }
+    MEM_TRACE("allocated at %p", alloc);
     return alloc;
 }
 
@@ -176,9 +166,7 @@ void lv_mem_free(void * data)
 #  if LV_MEM_ADD_JUNK
     lv_memset(data, 0xbb, lv_tlsf_block_size(data));
 #  endif
-    size_t size = lv_tlsf_free(tlsf, data);
-    if(cur_used > size) cur_used -= size;
-    else cur_used = 0;
+    lv_tlsf_free(tlsf, data);
 #else
     LV_MEM_CUSTOM_FREE(data);
 #endif
@@ -261,8 +249,6 @@ void lv_mem_monitor(lv_mem_monitor_t * mon_p)
     else {
         mon_p->frag_pct = 0; /*no fragmentation if all the RAM is used*/
     }
-
-    mon_p->max_used = max_used;
 
     MEM_TRACE("finished");
 #endif

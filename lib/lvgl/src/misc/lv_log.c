@@ -91,7 +91,7 @@ void _lv_log_add(lv_log_level_t level, const char * file, int line, const char *
         vprintf(format, args);
         printf(" \t(in %s line #%d)\n", &file[p], line);
 #else
-        if(custom_print_cb) {
+        if (custom_print_cb) {
             char buf[512];
 #if LV_SPRINTF_CUSTOM
             char msg[256];
@@ -112,29 +112,13 @@ void _lv_log_add(lv_log_level_t level, const char * file, int line, const char *
     }
 }
 
-void lv_log(const char * format, ...)
+void lv_log(const char * buf)
 {
-    if(LV_LOG_LEVEL >= LV_LOG_LEVEL_NONE) return; /* disable log */
-
-    va_list args;
-    va_start(args, format);
-
 #if LV_LOG_PRINTF
-    vprintf(format, args);
+    puts(buf);
 #else
-    if(custom_print_cb) {
-        char buf[512];
-#if LV_SPRINTF_CUSTOM
-        lv_vsnprintf(buf, sizeof(buf), format, args);
-#else
-        lv_vaformat_t vaf = {format, &args};
-        lv_snprintf(buf, sizeof(buf), "%pV", (void *)&vaf);
+    if(custom_print_cb) custom_print_cb(buf);
 #endif
-        custom_print_cb(buf);
-    }
-#endif
-
-    va_end(args);
 }
 
 /**********************

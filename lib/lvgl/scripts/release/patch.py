@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-# Applies a commit or commits on branch or branches
+# Applies a commit or commits on baranch or branches 
 # USAGE:
 # patch.py -c <commit-list> -b <branch-list> [-p] [-t]
-#   - <commit-list>: list of commit SHAs to apply.
-#   - <branch-list>: branches where the commit should be applied. * can be used as wildchar
-# -  p: push the changes to <branch-list>
+#   - <commit-list>: list of commit SHAs to apply. 
+#   - <branch-list>: branches where the commit should be applied. * can be used as wildchar 
+# -  p: push the changes to <brach-list>
 # -  t: increment version number and create a tag
 
 
@@ -20,8 +20,8 @@ def clone(repo):
   com.cmd("git remote update origin --prune")
   com.cmd("git pull origin --tags")
   os.chdir("..")
-
-# Get the list of related minor version branches
+    
+# Get the list of realted minor version branches
 
 #clone("lvgl")
 os.chdir("lvgl")
@@ -52,18 +52,18 @@ for br in branches:
   for c in commits:
     h = c.split(" ")
     com.cmd("git cherry-pick " + h[0])
-
+      
   ver = com.get_lvgl_version(br)
   ver_new = ver.copy()
   ver_new[2] = str(int(ver_new[2]) + 1)
   print("Updating branch '" + br + "' from '" + com.ver_format(ver) + "' to '" + com.ver_format(ver_new) + "'")
   com.update_version(ver_new)
   com.cmd("git tag -a " + com.ver_format(ver_new) + "-m \"Release " + com.ver_format(ver_new) + "\"")
-
+  
   if push:
     com.cmd("git push origin " + br + "--tags")
-
-com.cmd("git checkout master")
+    
+com.cmd("git checkout master")    
 ver = com.get_lvgl_version("master")
 ver = com.get_lvgl_version(br)
 ver_new[2] = str(int(ver_new[2]) + 1)
@@ -72,3 +72,4 @@ com.cmd("git tag -a " + t + " -m \"Start " + t + "\"")
 
 if push:
   com.cmd("git push origin master --tags")
+

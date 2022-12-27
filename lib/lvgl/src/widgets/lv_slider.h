@@ -65,7 +65,7 @@ typedef enum {
  **********************/
 
 /**
- * Create a slider object
+ * Create a slider objects
  * @param parent    pointer to an object, it will be the parent of the new slider.
  * @return          pointer to the created slider
  */

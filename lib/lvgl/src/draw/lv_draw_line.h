@@ -13,10 +13,7 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "../lv_conf_internal.h"
-#include "../misc/lv_color.h"
-#include "../misc/lv_area.h"
-#include "../misc/lv_style.h"
+#include "lv_draw_blend.h"
 
 /*********************
  *      DEFINES
@@ -37,14 +34,11 @@ typedef struct {
     uint8_t raw_end     : 1;    /*Do not bother with perpendicular line ending if it's not visible for any reason*/
 } lv_draw_line_dsc_t;
 
-struct _lv_draw_ctx_t;
-
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
 
-LV_ATTRIBUTE_FAST_MEM void lv_draw_line_dsc_init(lv_draw_line_dsc_t * dsc);
-
+//! @cond Doxygen_Suppress
 /**
  * Draw a line
  * @param point1 first point of the line
@@ -52,9 +46,12 @@ LV_ATTRIBUTE_FAST_MEM void lv_draw_line_dsc_init(lv_draw_line_dsc_t * dsc);
  * @param clip the line will be drawn only in this area
  * @param dsc pointer to an initialized `lv_draw_line_dsc_t` variable
  */
-void lv_draw_line(struct _lv_draw_ctx_t * draw_ctx, const lv_draw_line_dsc_t * dsc, const lv_point_t * point1,
-                  const lv_point_t * point2);
+LV_ATTRIBUTE_FAST_MEM void lv_draw_line(const lv_point_t * point1, const lv_point_t * point2, const lv_area_t * clip,
+                                        const lv_draw_line_dsc_t * dsc);
 
+LV_ATTRIBUTE_FAST_MEM void lv_draw_line_dsc_init(lv_draw_line_dsc_t * dsc);
+
+//! @endcond
 
 /**********************
  *      MACROS
