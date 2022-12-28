@@ -8,6 +8,14 @@
 #define TFT_DC 14
 #define TFT_RST 9
 
+#define MO1 17
+#define MO2 16
+#define MO3 15
+
+#define MT6701_SDA 1
+#define MT6701_SCL 2
+#define MT6701_SS 42
+
 #define CONFIG_SCREEN_HOR_RES       240
 #define CONFIG_SCREEN_VER_RES       240
 #define CONFIG_SCREEN_BUFFER_SIZE   (CONFIG_SCREEN_HOR_RES * CONFIG_SCREEN_VER_RES /2)

@@ -15,11 +15,14 @@ void HAL::Init()
     if (disp_draw_buf == nullptr)
         LV_LOG_WARN("lv_port_disp_init malloc failed!\n");
     
+    motor_init();
+
     knob_init(push_handler);
 }
 
 
 void HAL::Update()
 {
-    HAL::knob_update();
+    __IntervalExecute(HAL::knob_update(), 10);
+    HAL::motor_update();
 }
