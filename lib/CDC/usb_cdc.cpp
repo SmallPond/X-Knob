@@ -3,7 +3,6 @@
 
 #if ARDUINO_USB_MODE
 #warning This sketch should be used when USB is in OTG mode
-
 #else
 
 
@@ -15,6 +14,41 @@
 USBCDC USBSerial;
 #endif
 
+UsbBuffer_t usbBuffer;
+
+uint8_t* GetPingPongBufferPtr()
+{
+    return &(usbBuffer.rxData[usbBuffer.pingPongIndex][usbBuffer.rxDataOffset]);
+}
+
+
+void SendUsbPacket(uint8_t* _data, uint32_t _len)
+{
+    uint8_t ret;
+    do
+    {
+        ret = USBSerial.write(_data, _len);
+    } while (ret != 0);
+}
+
+
+void SwitchPingPongBuffer()
+{
+    usbBuffer.pingPongIndex = (usbBuffer.pingPongIndex == 0 ? 1 : 0);
+    usbBuffer.rxDataOffset = 0;
+}
+
+
+uint8_t* GetLcdBufferPtr()
+{
+    return usbBuffer.rxData[usbBuffer.pingPongIndex == 0 ? 1 : 0];
+}
+
+void ReceiveUsbPacketUntilSizeIs(uint32_t _count)
+{
+    while (usbBuffer.receivedPacketLen != _count);
+    usbBuffer.receivedPacketLen = 0;
+}
 
 static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
     if(event_base == ARDUINO_USB_EVENTS){
@@ -55,8 +89,8 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
                 HWSerial.printf("CDC RX [%u]:", data->rx.len);
                 {
                     uint8_t buf[data->rx.len];
-                    size_t len = USBSerial.read(buf, data->rx.len);
-                    HWSerial.write(buf, len);
+                    size_t len = USBSerial.read(GetPingPongBufferPtr(), data->rx.len);
+                    HWSerial.write(GetPingPongBufferPtr(), len);
                 }
                 HWSerial.println();
                 break;
@@ -76,6 +110,8 @@ void usb_cdc_init(void)
     USBSerial.onEvent(usbEventCallback);
     USBSerial.begin();
     USB.begin();
+    // RxBufferSize 默认 256
+    // USBSerial.setRxBufferSize(256)
 }
 
 #endif /* ARDUINO_USB_MODE */
