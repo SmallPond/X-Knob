@@ -3,12 +3,13 @@
 #include <Wire.h>
 #include <SPI.h>
 #include "port/display.h"
+#include "config.h"
 
-
+#define DISP_BUF_SIZE        CONFIG_SCREEN_BUFFER_SIZE
 static uint32_t screenWidth;
 static uint32_t screenHeight;
 static lv_disp_draw_buf_t draw_buf;
-static lv_color_t *disp_draw_buf;
+lv_color_t *disp_draw_buf;
 static lv_disp_drv_t disp_drv;
 uint8_t lv_page = 0;
 
@@ -25,26 +26,26 @@ static void disp_flush_cb(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t
 
 void my_print(lv_log_level_t level, const char* file, uint32_t line, const char* fun, const char* dsc)
 {
-    Serial.printf("%s@%d %s->%s\r\n", file, line, fun, dsc);
-    Serial.flush();
+
+    // Serial.printf("%s@%d %s->%s\r\n", file, line, fun);
+    // Serial.flush();
+    
 }
 
 
 void lv_port_disp_init(SCREEN_CLASS* scr) {
 
 
-#ifdef TFT_BLK
-    pinMode(TFT_BLK, OUTPUT);
-    digitalWrite(TFT_BLK, HIGH);
-#endif
+    lv_log_register_print_cb(
+        reinterpret_cast<lv_log_print_g_cb_t>(my_print)); /* register print function for debugging */
 
     screenWidth = scr->width();
     screenHeight = scr->height();
-    disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * screenWidth * 10);
-    if (!disp_draw_buf) {
-        LV_LOG_WARN("LVGL disp_draw_buf allocate failed!");
-    }
-    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * 10);
+    // disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * screenWidth * 10);
+    // if (!disp_draw_buf) {
+    //     LV_LOG_WARN("LVGL disp_draw_buf allocate failed!");
+    // }
+    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, DISP_BUF_SIZE);
 
     /* Initialize the display */
     lv_disp_drv_init(&disp_drv);
