@@ -30,7 +30,7 @@ void setup() {
     display_init();
     // ui_init();
     App_Init();
-    INIT_DONE();
+    // INIT_DONE();
 }
 
 void loop() {
