@@ -20,7 +20,7 @@ lv_meter_indicator_t * line_indic;
     #error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"
 #endif
 #if LV_COLOR_16_SWAP !=1
-    #error "#error LV_COLOR_16_SWAP should be 1 to match SquareLine Studio's settings"
+    #warning "#error LV_COLOR_16_SWAP should be 1 to match SquareLine Studio's settings"
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
