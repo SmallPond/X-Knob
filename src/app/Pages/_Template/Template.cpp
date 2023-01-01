@@ -1,5 +1,5 @@
 #include "Template.h"
-
+#include <Arduino.h>
 using namespace Page;
 
 Template::Template()
@@ -25,7 +25,7 @@ void Template::onViewLoad()
 	AttachEvent(root);
 	AttachEvent(View.ui.canvas);
 
-	Model.TickSave = Model.GetData();
+	// Model.TickSave = Model.GetData();
 }
 
 void Template::onViewDidLoad()
@@ -43,7 +43,7 @@ void Template::onViewWillAppear()
 
 	lv_obj_set_style_bg_color(root, param.color, LV_PART_MAIN);
 
-	timer = lv_timer_create(onTimerUpdate, param.time, this);
+	// timer = lv_timer_create(onTimerUpdate, param.time, this);
 }
 
 void Template::onViewDidAppear()
@@ -94,7 +94,7 @@ void Template::onEvent(lv_event_t* event)
 	{
 		if (lv_obj_has_state(obj, LV_STATE_FOCUSED))
 		{
-			instance->Manager->Push("Pages/SystemInfos");
+			instance->Manager->Push("Pages/Menu");
 		}
 	}
 }

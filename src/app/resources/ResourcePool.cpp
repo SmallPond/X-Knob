@@ -54,7 +54,7 @@ do{\
         IMPORT_IMG(bluetooth);
         IMPORT_IMG(pose6d);
         IMPORT_IMG(joints);
-        IMPORT_IMG(xman);
+        IMPORT_IMG(miku);
     }
 
 } /* extern "C" */
