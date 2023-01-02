@@ -25,7 +25,7 @@ void Template::onViewLoad()
 	AttachEvent(root);
 	AttachEvent(View.ui.canvas);
 
-	// Model.TickSave = Model.GetData();
+	Model.TickSave = Model.GetData();
 }
 
 void Template::onViewDidLoad()
@@ -43,7 +43,7 @@ void Template::onViewWillAppear()
 
 	lv_obj_set_style_bg_color(root, param.color, LV_PART_MAIN);
 
-	// timer = lv_timer_create(onTimerUpdate, param.time, this);
+	timer = lv_timer_create(onTimerUpdate, param.time, this);
 }
 
 void Template::onViewDidAppear()
