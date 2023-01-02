@@ -9,8 +9,6 @@ BLDCMotor motor = BLDCMotor(7);
 BLDCDriver3PWM driver = BLDCDriver3PWM(MO1, MO2, MO3);
 //目标变量
 float target_velocity = 0;
-float last_angle = 0;
-float now_angle = 0;
 
 static XKnobConfig x_knob_configs[] = {
     {
@@ -85,6 +83,13 @@ static const float IDLE_CORRECTION_MAX_ANGLE_RAD = 5 * PI / 180;
 // 怠速修正率
 static const float IDLE_CORRECTION_RATE_ALPHA = 0.0005;
 
+// 当前相对位置
+float current_detent_center = 0;
+// 上次空闲开始状态
+uint32_t last_idle_start = 0;
+// 怠速检查速度
+float idle_check_velocity_ewma = 0;
+
 //目标变量
 static float readMySensorCallback(void) {
     hspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
@@ -151,6 +156,22 @@ void update_motor_status(MOTOR_RUNNING_MODE_E motor_status)
     // xQueueSend(motor_msg_Queue, &send_message, (TickType_t)0);
 }
 
+//开机初始化角度至0
+void init_angle(void)
+{
+    float target_angle = 0;
+    target_angle = sensor.getAngle();
+    float delta = volt_limit / init_smooth;
+    for (int i = 0; i <= init_smooth; i++)
+    {
+        motor.voltage_limit = delta * i;
+        motor.loopFOC();
+        motor.move(target_angle);
+    }
+    motor.voltage_limit = volt_limit;
+}
+
+
 void HAL::motor_init(void)
 {
     update_motor_status(MOTOR_INIT);
@@ -164,12 +185,12 @@ void HAL::motor_init(void)
     motor.linkDriver(&driver);
     // FOC模型选择
     motor.foc_modulation = FOCModulationType::SpaceVectorPWM;
-    // 运动控制模式设置
-    motor.controller = MotionControlType::torque;
+    // 运动控制模式设置：先设置为角度控制，方便初次定位
+    motor.controller = MotionControlType::angle;
     // 速度PI环设置
     motor.PID_velocity.P = 0.1;
     motor.PID_velocity.I = 15;
-    // 最大电机限制电机
+    // 最大电压
     motor.voltage_limit = 5;
     // 速度低通滤波时间常数
     motor.LPF_velocity.Tf = 0.01;
@@ -185,20 +206,15 @@ void HAL::motor_init(void)
     // motor.initFOC(zero_electric_offset, foc_direction);
     motor.initFOC();
     update_motor_status(MOTOR_INIT_SUCCESS);
-    last_angle = motor.shaft_angle;
+    init_angle();
+    motor.controller = MotionControlType::torque;
     update_motor_status(MOTOR_INIT_END);
 
-    update_motor_config(1);
+    // update_motor_config(0);
 }
 
 void HAL::motor_update(void)
 {
-    // 当前相对位置
-    float current_detent_center = 0;
-    // 上次空闲开始状态
-    uint32_t last_idle_start = 0;
-    // 怠速检查速度
-    float idle_check_velocity_ewma = 0;
 
     sensor.update();
     motor.loopFOC();
@@ -283,12 +299,12 @@ void HAL::motor_update(void)
         fmaxf(-motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, -DEAD_ZONE_RAD),
         fminf(motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, DEAD_ZONE_RAD));
 
-    //出界
+    // 出界
     bool out_of_bounds = motor_config.num_positions > 0 && ((angle_to_detent_center > 0 && motor_config.position == 0) || (angle_to_detent_center < 0 && motor_config.position == motor_config.num_positions - 1));
     motor.PID_velocity.limit = out_of_bounds ? 10 : 3;
     motor.PID_velocity.P = out_of_bounds ? motor_config.endstop_strength_unit * 4 : motor_config.detent_strength_unit * 4;
 
-    //处理float类型的取绝对值
+    // 处理float类型的取绝对值
     if (fabsf(motor.shaft_velocity) > 60)
     {
         //如果速度太高 则不增加扭矩

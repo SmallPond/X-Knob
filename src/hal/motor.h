@@ -2,6 +2,10 @@
 #define __MOTOR_H__
 #include "hal.h"
 
+#define pi 3.1415926
+#define init_smooth 1000 // 该值越大，初始化越慢。以防受到干扰。
+#define volt_limit 5.0000
+
 struct XKnobConfig {
     // 可以运动的个数
     int32_t num_positions;        
