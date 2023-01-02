@@ -6,31 +6,39 @@
 static volatile int16_t EncoderDiff = 0;
 
 static ButtonEvent EncoderPush(2000);
-static int push_state = 0;
 
-bool HAL::push_button_is_pushed(void)
+/* 
+ * lvgl task call it in 5ms
+*/ 
+bool HAL::encoder_is_pushed(void)
 {
-    if (push_state == ButtonEvent::EVENT_PRESSED) {
-        Serial.printf("push button pused\n");
-        return true;
-
+    static int press_cnt = 0;
+    bool is_pushed = false;
+    if (digitalRead(PUSH_BUTTON_PIN) == LOW) {
+        press_cnt++;
+        if (press_cnt > 3) { // 10ms
+            if( digitalRead(PUSH_BUTTON_PIN) == LOW){
+                return true;
+            }
+        }
     } else {
-        return false;
+        press_cnt = 0;
     }
+    return false;
 }
 
 void HAL::knob_update(void)
 {
-    // EncoderPush.EventMonitor(push_button_is_pushed());
+    // EncoderPush.EventMonitor(encoder_is_pushed());
 }
 
 
 static void Encoder_PushHandler(ButtonEvent* btn, int event)
 {
-    push_state = event;;
+    
     if (event == ButtonEvent::EVENT_PRESSED)
     {
-        
+        Serial.printf("push is pused\n");
         // HAL::Buzz_Tone(500, 20);
         // EncoderDiffDisable = true;
         ;

@@ -13,7 +13,7 @@ namespace HAL
 
     void knob_init();
     void knob_update(void);
-    bool push_button_is_pushed(void);
+    bool encoder_is_pushed(void);
 
     void motor_init(void);
     void motor_update(void);
