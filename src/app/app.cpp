@@ -39,7 +39,7 @@ void App_Init()
     StatusBar::Init(lv_layer_top());
 
     manager.Install("Template", "Pages/Template");
-    // manager.Install("SystemInfos", "Pages/SystemInfos");
+    manager.Install("Menu", "Pages/Menu");
     manager.Install("Startup", "Pages/Startup");
     // manager.Install("Scene3D", "Pages/Scene3D");
 

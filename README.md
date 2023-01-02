@@ -8,6 +8,23 @@
 X-KNOB 支持的特性：
 - [ ] X-TRACK 丝滑 UI
 - [ ] 四种旋钮模式
+
+
+# 制作记录
+
+## LVGL
+
+
+基于已有框架增添自己的图片：
+
+- 图片生成C代码网站：[Online Image Converter BMP, JPG or PNG to C array or binary](https://lvgl.io/tools/imageconverter),选择 True color with alpha
+- 将生成的C文件保存到`src\App\Resources\Image\`目录下
+- 在 `src\App\Resources\ResourcePool.cpp` 增加一行声明
+- Icons 素材网站：[iconoir](https://iconoir.com/)
+  - Size: 42x42
+  - Stroke Width: 1.6
+  - Color: white
+
 # 参考项目
 
 - [Hardware: Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)

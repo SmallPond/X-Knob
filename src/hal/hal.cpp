@@ -4,7 +4,6 @@
 #define DISP_BUF_SIZE        CONFIG_SCREEN_BUFFER_SIZE
 
 extern lv_color_t* disp_draw_buf;
-void push_handler(ButtonEvent* btn, int event);
 
 void HAL::Init()
 {
@@ -17,7 +16,7 @@ void HAL::Init()
     
     motor_init();
 
-    knob_init(push_handler);
+    knob_init();
 }
 
 

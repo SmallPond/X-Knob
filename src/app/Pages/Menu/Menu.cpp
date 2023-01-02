@@ -1,0 +1,139 @@
+#include "Menu.h"
+#include "App/Configs/Version.h"
+
+using namespace Page;
+
+Menu::Menu()
+{
+}
+
+Menu::~Menu()
+{
+
+}
+
+void Menu::onCustomAttrConfig()
+{
+
+}
+
+void Menu::onViewLoad()
+{
+	Model.Init();
+	View.Create(root);
+	AttachEvent(root);
+	AttachEvent(View.ui.switches.icon);
+	AttachEvent(View.ui.dialpad.icon);
+	// AttachEvent(View.ui.system.icon);
+	// AttachEvent(View.ui.imu.icon);
+	// AttachEvent(View.ui.battery.icon);
+	// AttachEvent(View.ui.storage.icon);
+}
+
+void Menu::onViewDidLoad()
+{
+
+}
+
+void Menu::onViewWillAppear()
+{
+	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), View.ui.group);
+	StatusBar::SetStyle(StatusBar::STYLE_BLACK);
+
+	timer = lv_timer_create(onTimerUpdate, 100, this);
+	lv_timer_ready(timer);
+
+	View.SetScrollToY(root, -LV_VER_RES, LV_ANIM_OFF);
+	lv_obj_fade_in(root, 300, 0);
+}
+
+void Menu::onViewDidAppear()
+{
+	View.onFocus(View.ui.group);
+}
+
+void Menu::onViewWillDisappear()
+{
+	lv_obj_fade_out(root, 300, 0);
+}
+
+void Menu::onViewDidDisappear()
+{
+	lv_timer_del(timer);
+}
+
+void Menu::onViewDidUnload()
+{
+	View.Delete();
+	Model.Deinit();
+}
+
+void Menu::AttachEvent(lv_obj_t* obj)
+{
+	lv_obj_set_user_data(obj, this);
+	lv_obj_add_event_cb(obj, onEvent, LV_EVENT_PRESSED, this);
+}
+
+void Menu::Update()
+{
+	char buf[64];
+
+	/* Joints */
+	Model.GetJointsInfo(buf, sizeof(buf));
+	View.SetJoints(buf);
+
+	/* Pose6D */
+	Model.GetPose6DInfo(buf, sizeof(buf));
+	View.SetPose6D(buf);
+
+	/* IMU */
+	// Model.GetIMUInfo(buf, sizeof(buf));
+	// View.SetIMU(buf);
+
+	/* Power */
+	// int usage;
+	// float voltage;
+	// Model.GetBatteryInfo(&usage, &voltage, buf, sizeof(buf));
+	// View.SetBattery(usage, voltage, buf);
+
+	/* Storage */
+	// bool detect;
+	// Model.GetStorageInfo(&detect, buf, sizeof(buf));
+	// View.SetStorage(
+	// 	detect ? "YES" : "NO",
+	// 	buf,
+	// 	VERSION_FILESYSTEM
+	// );
+
+	/* System */
+	View.SetSystem(
+		VERSION_FIRMWARE_NAME " " VERSION_SOFTWARE,
+		VERSION_AUTHOR_NAME,
+		VERSION_LVGL,
+		"dummy time",
+		VERSION_COMPILER,
+		VERSION_BUILD_TIME
+	);
+}
+
+void Menu::onTimerUpdate(lv_timer_t* timer)
+{
+	Menu* instance = (Menu*)timer->user_data;
+
+	instance->Update();
+}
+
+void Menu::onEvent(lv_event_t* event)
+{
+	lv_obj_t* obj = lv_event_get_target(event);
+	lv_event_code_t code = lv_event_get_code(event);
+	auto* instance = (Menu*)lv_obj_get_user_data(obj);
+
+	if (code == LV_EVENT_PRESSED)
+	{
+		// if (lv_obj_has_state(obj, LV_STATE_FOCUSED))
+		// {
+		// 	instance->Manager->Push("Pages/Scene3D");
+		// }
+	}
+}

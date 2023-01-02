@@ -1,5 +1,5 @@
 #include "Template.h"
-
+#include <Arduino.h>
 using namespace Page;
 
 Template::Template()
@@ -94,7 +94,7 @@ void Template::onEvent(lv_event_t* event)
 	{
 		if (lv_obj_has_state(obj, LV_STATE_FOCUSED))
 		{
-			instance->Manager->Push("Pages/SystemInfos");
+			instance->Manager->Push("Pages/Menu");
 		}
 	}
 }
