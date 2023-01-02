@@ -52,8 +52,8 @@ do{\
 
         // IMPORT_IMG(arm);
         IMPORT_IMG(bluetooth);
-        IMPORT_IMG(pose6d);
-        IMPORT_IMG(joints);
+        IMPORT_IMG(switches);
+        IMPORT_IMG(dialpad);
         IMPORT_IMG(miku);
     }
 
