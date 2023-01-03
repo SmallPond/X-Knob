@@ -23,5 +23,5 @@ void HAL::Init()
 void HAL::Update()
 {
     __IntervalExecute(HAL::knob_update(), 10);
-    HAL::motor_update();
+    // HAL::TaskMotorUpdate(NULL);
 }

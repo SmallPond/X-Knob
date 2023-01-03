@@ -22,4 +22,7 @@
 
 #define PUSH_BUTTON_PIN 5
 
+#define LVGL_RUNNING_CORE   0            
+#define ESP32_RUNNING_CORE  1            
+
 #endif 

@@ -121,7 +121,7 @@ static float CLAMP(const float value, const float low, const float high)
     return value < low ? low : (value > high ? high : value);
 }
 
-static void motor_shake(int strength, int delay_time)
+void HAL::motor_shake(int strength, int delay_time)
 {
     motor.move(strength);
     for (int i = 0; i < delay_time; i++)
@@ -143,9 +143,9 @@ int HAL::get_motor_position(void)
     return motor_config.position;
 }
 
-void HAL::update_motor_config(int status)
+void HAL::update_motor_mode(int mode)
 {
-    motor_config = x_knob_configs[status];
+    motor_config = x_knob_configs[mode];
 }
 
 void update_motor_status(MOTOR_RUNNING_MODE_E motor_status)
@@ -161,6 +161,7 @@ void init_angle(void)
 {
     float target_angle = 0;
     target_angle = sensor.getAngle();
+    Serial.printf("init_angle to current target %f\n", target_angle);
     float delta = volt_limit / init_smooth;
     for (int i = 0; i <= init_smooth; i++)
     {
@@ -169,6 +170,119 @@ void init_angle(void)
         motor.move(target_angle);
     }
     motor.voltage_limit = volt_limit;
+}
+
+
+TaskHandle_t handleTaskMotor;
+void TaskMotorUpdate(void *pvParameters)
+{
+    while(1) {
+        sensor.update();
+        motor.loopFOC();
+        
+        //监听页面状态
+        // struct _knob_message *lvgl_message;
+        // if (xQueueReceive(motor_rcv_Queue, &(lvgl_message), (TickType_t)0))
+        // {
+        //     Serial.print("motor_rcv_Queue --->");
+        //     Serial.println(lvgl_message->ucMessageID);
+        //     switch (lvgl_message->ucMessageID)
+        //     {
+        //     case CHECKOUT_PAGE:
+        //     {
+        //         //上次的相对位置
+        //         current_detent_center = motor.shaft_angle;
+        //         // motor.PID_velocity.limit = 10;
+
+        //         const float derivative_lower_strength = motor_config.detent_strength_unit * 0.08;
+        //         const float derivative_upper_strength = motor_config.detent_strength_unit * 0.02;
+        //         const float derivative_position_width_lower = radians(3);
+        //         const float derivative_position_width_upper = radians(8);
+        //         const float raw = derivative_lower_strength + (derivative_upper_strength - derivative_lower_strength) / (derivative_position_width_upper - derivative_position_width_lower) * (motor_config.position_width_radians - derivative_position_width_lower);
+        //         // CLAMP可以将随机变化的值限制在一个给定的区间[min,max]内
+        //         motor.PID_velocity.D = CLAMP(
+        //             raw,
+        //             min(derivative_lower_strength, derivative_upper_strength),
+        //             max(derivative_lower_strength, derivative_upper_strength));
+
+        //         //存在页面切换 就震动一下
+        //         motor_shake(2, 2);
+        //     }
+        //     break;
+        //     case BUTTON_CLICK:
+        //         motor_shake(2, 2);
+        //         break;
+        //     default:
+        //         break;
+        //     }
+        // }
+
+        idle_check_velocity_ewma = motor.shaft_velocity * IDLE_VELOCITY_EWMA_ALPHA + idle_check_velocity_ewma * (1 - IDLE_VELOCITY_EWMA_ALPHA);
+        if (fabsf(idle_check_velocity_ewma) > IDLE_VELOCITY_RAD_PER_SEC)
+        {
+            last_idle_start = 0;
+        }
+        else
+        {
+            if (last_idle_start == 0)
+            {
+                last_idle_start = millis();
+            }
+        }
+
+        // 如果我们没有移动，并且我们接近中心(但不是完全在那里)，慢慢调整中心点以匹配当前位置
+        // If we are not moving and we're close to the center (but not exactly there), slowly adjust the centerpoint to match the current position
+        if (last_idle_start > 0 && millis() - last_idle_start > IDLE_CORRECTION_DELAY_MILLIS && fabsf(motor.shaft_angle - current_detent_center) < IDLE_CORRECTION_MAX_ANGLE_RAD)
+        {
+            // Serial.println("slowly adjust the centerpoint to match the current position......");
+            current_detent_center = motor.shaft_angle * IDLE_CORRECTION_RATE_ALPHA + current_detent_center * (1 - IDLE_CORRECTION_RATE_ALPHA);
+        }
+
+        //到控制中心的角度 差值
+        float angle_to_detent_center = motor.shaft_angle - current_detent_center;
+
+        if (angle_to_detent_center > motor_config.position_width_radians * motor_config.snap_point && (motor_config.num_positions <= 0 || motor_config.position > 0))
+        {
+            current_detent_center += motor_config.position_width_radians;
+            angle_to_detent_center -= motor_config.position_width_radians;
+            motor_config.position--;
+        }
+        else if (angle_to_detent_center < -motor_config.position_width_radians * motor_config.snap_point && (motor_config.num_positions <= 0 || motor_config.position < motor_config.num_positions - 1))
+        {
+            current_detent_center -= motor_config.position_width_radians;
+            angle_to_detent_center += motor_config.position_width_radians;
+            motor_config.position++;
+        }
+
+        // 死区调整
+        float dead_zone_adjustment = CLAMP(
+            angle_to_detent_center,
+            fmaxf(-motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, -DEAD_ZONE_RAD),
+            fminf(motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, DEAD_ZONE_RAD));
+
+        // 出界
+        bool out_of_bounds = motor_config.num_positions > 0 && ((angle_to_detent_center > 0 && motor_config.position == 0) || (angle_to_detent_center < 0 && motor_config.position == motor_config.num_positions - 1));
+        motor.PID_velocity.limit = out_of_bounds ? 10 : 3;
+        motor.PID_velocity.P = out_of_bounds ? motor_config.endstop_strength_unit * 4 : motor_config.detent_strength_unit * 4;
+
+        // 处理float类型的取绝对值
+        if (fabsf(motor.shaft_velocity) > 60)
+        {
+            //如果速度太高 则不增加扭矩
+            // Don't apply torque if velocity is too high (helps avoid positive feedback loop/runaway)
+            Serial.println("(motor.shaft_velocity) > 60 !!!");
+            motor.move(0);
+        }
+        else
+        {
+            float torque = motor.PID_velocity(-angle_to_detent_center + dead_zone_adjustment);
+            motor.move(torque);
+        }
+
+        Serial.printf("curren position %d\n", motor_config.position);
+        vTaskDelay(1);
+    }
+    
 }
 
 
@@ -210,116 +324,15 @@ void HAL::motor_init(void)
     motor.controller = MotionControlType::torque;
     update_motor_status(MOTOR_INIT_END);
 
+
+    xTaskCreatePinnedToCore(
+        TaskMotorUpdate,
+        "MotorThread",
+        4096,
+        nullptr,
+        2,
+        &handleTaskMotor,
+        ESP32_RUNNING_CORE);
     // update_motor_config(0);
 }
-
-void HAL::motor_update(void)
-{
-
-    sensor.update();
-    motor.loopFOC();
-    
-    //监听页面状态
-    // struct _knob_message *lvgl_message;
-    // if (xQueueReceive(motor_rcv_Queue, &(lvgl_message), (TickType_t)0))
-    // {
-    //     Serial.print("motor_rcv_Queue --->");
-    //     Serial.println(lvgl_message->ucMessageID);
-    //     switch (lvgl_message->ucMessageID)
-    //     {
-    //     case CHECKOUT_PAGE:
-    //     {
-    //         //上次的相对位置
-    //         current_detent_center = motor.shaft_angle;
-    //         // motor.PID_velocity.limit = 10;
-
-    //         const float derivative_lower_strength = motor_config.detent_strength_unit * 0.08;
-    //         const float derivative_upper_strength = motor_config.detent_strength_unit * 0.02;
-    //         const float derivative_position_width_lower = radians(3);
-    //         const float derivative_position_width_upper = radians(8);
-    //         const float raw = derivative_lower_strength + (derivative_upper_strength - derivative_lower_strength) / (derivative_position_width_upper - derivative_position_width_lower) * (motor_config.position_width_radians - derivative_position_width_lower);
-    //         // CLAMP可以将随机变化的值限制在一个给定的区间[min,max]内
-    //         motor.PID_velocity.D = CLAMP(
-    //             raw,
-    //             min(derivative_lower_strength, derivative_upper_strength),
-    //             max(derivative_lower_strength, derivative_upper_strength));
-
-    //         //存在页面切换 就震动一下
-    //         motor_shake(2, 2);
-    //     }
-    //     break;
-    //     case BUTTON_CLICK:
-    //         motor_shake(2, 2);
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-
-    idle_check_velocity_ewma = motor.shaft_velocity * IDLE_VELOCITY_EWMA_ALPHA + idle_check_velocity_ewma * (1 - IDLE_VELOCITY_EWMA_ALPHA);
-    if (fabsf(idle_check_velocity_ewma) > IDLE_VELOCITY_RAD_PER_SEC)
-    {
-        last_idle_start = 0;
-    }
-    else
-    {
-        if (last_idle_start == 0)
-        {
-            last_idle_start = millis();
-        }
-    }
-
-    // 如果我们没有移动，并且我们接近中心(但不是完全在那里)，慢慢调整中心点以匹配当前位置
-    // If we are not moving and we're close to the center (but not exactly there), slowly adjust the centerpoint to match the current position
-    if (last_idle_start > 0 && millis() - last_idle_start > IDLE_CORRECTION_DELAY_MILLIS && fabsf(motor.shaft_angle - current_detent_center) < IDLE_CORRECTION_MAX_ANGLE_RAD)
-    {
-        // Serial.println("slowly adjust the centerpoint to match the current position......");
-        current_detent_center = motor.shaft_angle * IDLE_CORRECTION_RATE_ALPHA + current_detent_center * (1 - IDLE_CORRECTION_RATE_ALPHA);
-    }
-
-    //到控制中心的角度 差值
-    float angle_to_detent_center = motor.shaft_angle - current_detent_center;
-
-    if (angle_to_detent_center > motor_config.position_width_radians * motor_config.snap_point && (motor_config.num_positions <= 0 || motor_config.position > 0))
-    {
-        current_detent_center += motor_config.position_width_radians;
-        angle_to_detent_center -= motor_config.position_width_radians;
-        motor_config.position--;
-    }
-    else if (angle_to_detent_center < -motor_config.position_width_radians * motor_config.snap_point && (motor_config.num_positions <= 0 || motor_config.position < motor_config.num_positions - 1))
-    {
-        current_detent_center -= motor_config.position_width_radians;
-        angle_to_detent_center += motor_config.position_width_radians;
-        motor_config.position++;
-    }
-
-    // 死区调整
-    float dead_zone_adjustment = CLAMP(
-        angle_to_detent_center,
-        fmaxf(-motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, -DEAD_ZONE_RAD),
-        fminf(motor_config.position_width_radians * DEAD_ZONE_DETENT_PERCENT, DEAD_ZONE_RAD));
-
-    // 出界
-    bool out_of_bounds = motor_config.num_positions > 0 && ((angle_to_detent_center > 0 && motor_config.position == 0) || (angle_to_detent_center < 0 && motor_config.position == motor_config.num_positions - 1));
-    motor.PID_velocity.limit = out_of_bounds ? 10 : 3;
-    motor.PID_velocity.P = out_of_bounds ? motor_config.endstop_strength_unit * 4 : motor_config.detent_strength_unit * 4;
-
-    // 处理float类型的取绝对值
-    if (fabsf(motor.shaft_velocity) > 60)
-    {
-        //如果速度太高 则不增加扭矩
-        // Don't apply torque if velocity is too high (helps avoid positive feedback loop/runaway)
-        Serial.println("(motor.shaft_velocity) > 60 !!!");
-        motor.move(0);
-    }
-    else
-    {
-        float torque = motor.PID_velocity(-angle_to_detent_center + dead_zone_adjustment);
-        motor.move(torque);
-    }
-
-    // Serial.println(motor_config.position);
-    vTaskDelay(1);
-}
-
 
