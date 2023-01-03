@@ -279,7 +279,7 @@ void TaskMotorUpdate(void *pvParameters)
             motor.move(torque);
         }
 
-        Serial.printf("curren position %d\n", motor_config.position);
+        // Serial.printf("curren position %d\n", motor_config.position);
         vTaskDelay(1);
     }
     
