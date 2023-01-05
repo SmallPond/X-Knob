@@ -176,6 +176,8 @@ void init_angle(void)
 TaskHandle_t handleTaskMotor;
 void TaskMotorUpdate(void *pvParameters)
 {
+    // ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    current_detent_center = motor.shaft_angle;
     while(1) {
         sensor.update();
         motor.loopFOC();
@@ -270,7 +272,7 @@ void TaskMotorUpdate(void *pvParameters)
         {
             //如果速度太高 则不增加扭矩
             // Don't apply torque if velocity is too high (helps avoid positive feedback loop/runaway)
-            Serial.println("(motor.shaft_velocity) > 60 !!!");
+            // Serial.println("(motor.shaft_velocity) > 60 !!!");
             motor.move(0);
         }
         else
@@ -278,8 +280,8 @@ void TaskMotorUpdate(void *pvParameters)
             float torque = motor.PID_velocity(-angle_to_detent_center + dead_zone_adjustment);
             motor.move(torque);
         }
-
-        // Serial.printf("curren position %d\n", motor_config.position);
+        motor.monitor();
+        // Serial.println(motor_config.position);
         vTaskDelay(1);
     }
     
@@ -311,7 +313,6 @@ void HAL::motor_init(void)
     // 设置最大速度限制
     motor.velocity_limit = 40;
 
-    motor.useMonitoring(Serial);
     // 初始化电机
     motor.init();
     // 初始化 FOC
@@ -324,7 +325,11 @@ void HAL::motor_init(void)
     motor.controller = MotionControlType::torque;
     update_motor_status(MOTOR_INIT_END);
 
-
+    motor.useMonitoring(Serial);
+    motor.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE; 
+    // downsampling
+    motor.monitor_downsample = 100; // default 10
+    
     xTaskCreatePinnedToCore(
         TaskMotorUpdate,
         "MotorThread",
