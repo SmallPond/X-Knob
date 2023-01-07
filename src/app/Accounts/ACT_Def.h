@@ -73,11 +73,18 @@ typedef struct
     const char* labelRecStr;
 } StatusBar_Info_t;
 
-/* MusicPlayer */
+/* Motor */
+typedef enum
+{
+    MOTOR_CMD_CHANGE_MODE,
+    MOTOR_CMD_CHECKOUT_PAGE,
+} Motor_Cmd_t;
+
 typedef struct
 {
-    const char* music;
-} MusicPlayer_Info_t;
+    Motor_Cmd_t cmd;
+    int motor_mode;
+} Motor_Info_t;
 
 /* SysConfig */
 typedef enum

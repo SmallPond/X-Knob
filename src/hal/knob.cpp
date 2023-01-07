@@ -12,18 +12,23 @@ static ButtonEvent EncoderPush(2000);
 */ 
 bool HAL::encoder_is_pushed(void)
 {
-    static int press_cnt = 0;
-    bool is_pushed = false;
+    // static int press_cnt = 0;
+    // bool is_pushed = false;
+    // if (digitalRead(PUSH_BUTTON_PIN) == LOW) {
+    //     press_cnt++;
+    //     if (press_cnt > 3) { // 10ms
+    //         if( digitalRead(PUSH_BUTTON_PIN) == LOW){
+    //             return true;
+    //         }
+    //     }
+    // } else {
+    //     press_cnt = 0;
+    // }
+    // return false;
     if (digitalRead(PUSH_BUTTON_PIN) == LOW) {
-        press_cnt++;
-        if (press_cnt > 3) { // 10ms
-            if( digitalRead(PUSH_BUTTON_PIN) == LOW){
-                return true;
-            }
-        }
-    } else {
-        press_cnt = 0;
-    }
+        Serial.printf("Push button Pressed\n");
+        return true;
+    } 
     return false;
 }
 

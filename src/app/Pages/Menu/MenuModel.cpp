@@ -1,12 +1,12 @@
 #include "MenuModel.h"
 #include <stdio.h>
-
+#include <Arduino.h>
 using namespace Page;
 
 void MenuModel::Init()
 {
-    // account = new Account("MenuModel", AccountSystem::Broker(), 0, this);
-
+    account = new Account("MenuModel", AccountSystem::Broker(), 0, this);
+    account->Subscribe("Motor");
     // account->Subscribe("IMU");
     // account->Subscribe("Power");
     // account->Subscribe("Storage");
@@ -14,11 +14,11 @@ void MenuModel::Init()
 
 void MenuModel::Deinit()
 {
-    // if (account)
-    // {
-    //     delete account;
-    //     account = nullptr;
-    // }
+    if (account)
+    {
+        delete account;
+        account = nullptr;
+    }
 }
 
 
@@ -88,4 +88,15 @@ void Page::MenuModel::GetPose6DInfo(char* data, uint32_t len)
         data, len,
         "222\n0\n307\n0\n90\n0\n"
     );
+}
+
+
+void MenuModel::ChangeMotorMode(int mode)
+{
+    Serial.printf("MenuModel: Change Motor Mode\n");
+    AccountSystem::Motor_Info_t info;
+    info.cmd = AccountSystem::MOTOR_CMD_CHANGE_MODE;
+    info.motor_mode = mode;
+    // 第一个参数是通知发布者，即本 Account 应该 subscribe 第一个参数指向的 Account 
+    account->Notify("Motor", &info, sizeof(info));  
 }

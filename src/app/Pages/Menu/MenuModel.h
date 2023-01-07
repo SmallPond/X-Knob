@@ -35,6 +35,8 @@ public:
         char* data, uint32_t len
     );
 
+    void ChangeMotorMode(int mode);
+
 private:
     Account* account;
 
