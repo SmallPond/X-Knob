@@ -204,8 +204,8 @@ bool Account::Commit(const void* data_p, uint32_t size)
 
     PingPongBuffer_SetWriteDone(&priv.BufferManager);
 
-    DC_LOG_INFO("pub[%s] commit data(0x%p)[%d] >> data(0x%p)[%d] done",
-                ID, data_p, size, wBuf, size);
+    // DC_LOG_INFO("pub[%s] commit data(0x%p)[%d] >> data(0x%p)[%d] done",
+    //             ID, data_p, size, wBuf, size);
 
     return true;
 }
@@ -258,7 +258,9 @@ int Account::Publish()
         }
         else
         {
-            DC_LOG_INFO("sub[%s] not register callback", sub->ID);
+            // FIX sub[MASTER] not register callback
+            if (strcmp(sub->ID, "MASTER") != 0)
+                DC_LOG_INFO("sub[%s] not register callback", sub->ID);
         }
     }
 
