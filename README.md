@@ -27,6 +27,21 @@ X-KNOB 支持的特性：
 UI 设计工具：
 - [NXP GUI Guider](https://www.nxp.com/design/software/development-software/gui-guider:GUI-GUIDER)
   
+## SimpleFOC 
+- [SimpleFOCStudio](https://github.com/JorgeMaker/SimpleFOCStudio)
+
+## X-TRACK
+
+### 消息通信机制
+
+- `Subscribe/Unsubscribe`：订阅者向发布者发起/取消订阅
+- `Publish`: 发布者向订阅者发布消息
+  - 当发布者调用此函数时，消息通知框架将会依次调用各个订阅者通过`SetEventCallback()` 函数注册的回调函数。
+- `Notify`: 订阅者向发布者主动发送消息
+  - 当订阅者调用此函数时，消息通知框架将调用发布者通过`SetEventCallback()`函数注册的回调函数。
+- `Pull`: 订阅者主动向发布者拉消息
+  - 消息框架将调用发布者注册的回调函数。这种情况下，发布者注册的 callback 是判断`EVENT_SUB_PULL`事件，将信息填充到订阅者指定的 buf 中
+
 # 参考项目
 
 - [Hardware: Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)
