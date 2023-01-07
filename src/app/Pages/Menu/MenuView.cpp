@@ -39,15 +39,17 @@ void MenuView::Create(lv_obj_t* root)
 	Item_Create(
 		&ui.switches,
 		root,
-		"switch",
+		"Play",
 		"switches",
 
-		"X\n"
-		"Y\n"
-		"Z\n"
-		"A\n"
-		"B\n"
-		"C\n"
+		"Playground\n"
+		"Unbounded No detents\n"
+		"On/off\n"
+		"Return-to-center\n"
+		"Fine values\n"
+		"Coarse values\n"
+
+
 	);
 
 	// /* Item System */

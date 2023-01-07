@@ -78,13 +78,8 @@ void Menu::Update()
 {
 	char buf[64];
 
-	/* Joints */
-	Model.GetJointsInfo(buf, sizeof(buf));
-	View.SetJoints(buf);
+	View.SetJoints("0\n0\n80\n");
 
-	/* Pose6D */
-	Model.GetPose6DInfo(buf, sizeof(buf));
-	View.SetPose6D(buf);
 
 	/* IMU */
 	// Model.GetIMUInfo(buf, sizeof(buf));
@@ -132,5 +127,6 @@ void Menu::onEvent(lv_event_t* event)
 	if (code == LV_EVENT_PRESSED)
 	{
 		instance->Model.ChangeMotorMode(2);
+		instance->Manager->Push("Pages/Playground");
 	}
 }

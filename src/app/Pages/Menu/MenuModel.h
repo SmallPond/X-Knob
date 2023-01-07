@@ -22,19 +22,6 @@ public:
         char* state, uint32_t len
     );
 
-    void GetStorageInfo(
-        bool* detect,
-        char* size, uint32_t len
-    );
-
-    void GetJointsInfo(
-        char* data, uint32_t len
-    );
-    
-    void GetPose6DInfo(
-        char* data, uint32_t len
-    );
-
     void ChangeMotorMode(int mode);
 
 private:

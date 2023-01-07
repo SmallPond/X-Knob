@@ -273,8 +273,8 @@ static lv_obj_t* StatusBar_Create(lv_obj_t* par)
 
     StatusBar::SetStyle(StatusBar::STYLE_TRANSP);
 
-    lv_timer_t* timer = lv_timer_create(StatusBar_Update, 1000, nullptr);
-    lv_timer_ready(timer);
+    // lv_timer_t* timer = lv_timer_create(StatusBar_Update, 1000, nullptr);
+    // lv_timer_ready(timer);
 
     return ui.cont;
 }
