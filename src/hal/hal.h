@@ -20,7 +20,6 @@ namespace HAL
     int get_motor_position(void);
     void update_motor_mode(int mode);
     void motor_shake(int strength, int delay_time);
-    
 }
 
 
