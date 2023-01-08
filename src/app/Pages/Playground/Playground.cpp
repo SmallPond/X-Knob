@@ -74,10 +74,10 @@ void Playground::Update()
 {
 	int32_t pos = 0;
 	int32_t xknob_value = 2;
-
-	Model.GetKnobStatus(&xknob_value, &pos);
+	PlaygroundMotorInfo info;
+	Model.GetKnobStatus(&info);
 	// Serial.printf("xknob_value %d, pos: %d\n", xknob_value, pos);
-	View.UpdateView(xknob_value, pos);
+	View.UpdateView(&info);
 }
 
 
@@ -96,8 +96,10 @@ void Playground::onEvent(lv_event_t* event)
 
 	if (code == LV_EVENT_PRESSED)
 	{
+		instance->Model.ChangeMotorMode(PLAYGROUND_MODE_BOUND);
+		instance->Model.SetPlaygroundMode(PLAYGROUND_MODE_BOUND);
+		instance->View.SetPlaygroundMode(PLAYGROUND_MODE_BOUND);
 		
-		instance->Manager->Push("Pages/Menu");
 		
 	}
 }

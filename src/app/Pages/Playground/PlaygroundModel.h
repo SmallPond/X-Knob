@@ -2,7 +2,7 @@
 #define __PLAGROUND_MODEL_H
 #include "App/Utils/AccountSystem/Account.h"
 #include "lvgl.h"
-
+#include "PlaygroundView.h"
 namespace Page
 {
 
@@ -12,7 +12,10 @@ public:
     void Init();
     void Deinit();
     void Update(void* pg_ui);
-    void GetKnobStatus(int32_t *value, int32_t *motor_position);
+    void GetKnobStatus(PlaygroundMotorInfo *info);
+    void ChangeMotorMode(int mode);
+    void SetPlaygroundMode(int16_t mode);
+    int16_t playgroundMode;
 private:
     Account* account;
 };
