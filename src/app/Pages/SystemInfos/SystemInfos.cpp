@@ -38,7 +38,7 @@ void SystemInfos::onViewDidLoad()
 void SystemInfos::onViewWillAppear()
 {
 	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), View.ui.group);
-	StatusBar::SetStyle(StatusBar::STYLE_BLACK);
+	// StatusBar::SetStyle(StatusBar::STYLE_BLACK);
 
 	timer = lv_timer_create(onTimerUpdate, 100, this);
 	lv_timer_ready(timer);

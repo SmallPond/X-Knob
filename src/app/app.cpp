@@ -36,7 +36,7 @@ void App_Init()
     Resource.Init();
 
     // /*----------------------- Pages Init -----------------------*/
-    StatusBar::Init(lv_layer_top());
+    // StatusBar::Init(lv_layer_top());
 
     manager.Install("Template", "Pages/Template");
     manager.Install("Menu", "Pages/Menu");
