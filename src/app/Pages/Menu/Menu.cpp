@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include "App/Configs/Version.h"
-
+#include "hal/motor.h"
 using namespace Page;
 
 Menu::Menu()
@@ -126,7 +126,7 @@ void Menu::onEvent(lv_event_t* event)
 
 	if (code == LV_EVENT_PRESSED)
 	{
-		instance->Model.ChangeMotorMode(2);
+		instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 		instance->Manager->Push("Pages/Playground");
 	}
 }

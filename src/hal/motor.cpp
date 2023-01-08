@@ -21,7 +21,8 @@ static XKnobConfig x_knob_configs[] = {
     // float endstop_strength_unit;  
     // float snap_point;           
     // char descriptor[50]; 
-    {
+
+    [MOTOR_UNBOUND_NO_DETENTS] = {
         0,
         0,
         10 * PI / 180,
@@ -30,7 +31,16 @@ static XKnobConfig x_knob_configs[] = {
         1.1,
         "Unbounded\nNo detents", //无限制  不制动
     },
-    {
+    [MOTOR_BOUND_0_12_NO_DETENTS]= {
+        13,
+        0,
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Bounded 0-13\nNo detents",
+    },
+    [MOTOR_COARSE_DETENTS] = {
         32,
         0,
         8.225806452 * PI / 180,
@@ -39,16 +49,16 @@ static XKnobConfig x_knob_configs[] = {
         1.1,
         "Coarse values\nStrong detents", //粗糙的棘轮 强阻尼
     },
-    {
+    [MOTOR_FINE_DETENTS] = {
         0,
-        127,
+        0,
         1 * PI / 180,
         1,
         1,
         1.1,
         "Fine values\nWith detents", //任意运动的控制  有阻尼 类似于机械旋钮
     },
-    {
+    [MOTOR_FINE_NO_DETENTS] = {
         256,
         127,
         1 * PI / 180,
@@ -57,11 +67,11 @@ static XKnobConfig x_knob_configs[] = {
         1.1,
         "Fine values\nNo detents", //任意运动的控制  无阻尼
     },
-    {
-        2, //可以运动的个数
+    [MOTOR_ON_OFF_STRONG_DETENTS] = {
+        2, 
         0,
-        60 * PI / 180, //每一步60度
-        1,             //制动强度为1
+        60 * PI / 180, 
+        1,             
         1,
         0.55,                    // Note the snap point is slightly past the midpoint (0.5); compare to normal detents which use a snap point *past* the next value (i.e. > 1)
         "On/off\nStrong detent", //模拟开关  强制动
@@ -100,6 +110,8 @@ uint32_t last_idle_start = 0;
 // 怠速检查速度
 float idle_check_velocity_ewma = 0;
 
+// 电机角度到当前位置的偏差
+float angle_to_detent_center = 0;
 //  ------------monitor--------------------
 Commander commander = Commander(Serial, '\n', false);
 void onPid(char* cmd){commander.pid(&motor.PID_velocity, cmd);}
@@ -168,15 +180,22 @@ void HAL::update_motor_mode(int mode)
     #endif
 }
 
-void motor_status_publish()
+static void motor_status_publish(bool is_outbound)
 {
     // position
     static int32_t last_position = 0;
-    if (motor_config.position != last_position) {
-        actMotorStatus->Commit((const void*)&motor_config.position, sizeof(int32_t));
+
+    if (is_outbound || motor_config.position != last_position) {
+        MotorStatusInfo info = {
+            .is_outbound = is_outbound,
+            .position = motor_config.position,
+            .angle_offset = angle_to_detent_center * 180 / PI,  // 转换为角度
+        };
+        actMotorStatus->Commit((const void*)&info, sizeof(MotorStatusInfo));
         actMotorStatus->Publish();
         last_position = motor_config.position;
     }
+    
 }
 
 TaskHandle_t handleTaskMotor;
@@ -216,9 +235,9 @@ void TaskMotorUpdate(void *pvParameters)
 
         //到控制中心的角度 差值
         #if XK_INVERT_ROTATION
-            float angle_to_detent_center = -motor.shaft_angle - current_detent_center;
+            angle_to_detent_center = -motor.shaft_angle - current_detent_center;
         #else 
-            float angle_to_detent_center = motor.shaft_angle - current_detent_center;
+            angle_to_detent_center = motor.shaft_angle - current_detent_center;
         #endif 
         // 每一步都乘以了 snap_point 的值
 
@@ -273,7 +292,7 @@ void TaskMotorUpdate(void *pvParameters)
         }
         motor.monitor();
         commander.run();
-        motor_status_publish();
+        motor_status_publish(out_of_bounds);
         // Serial.println(motor_config.position);
         vTaskDelay(1);
     }
@@ -325,7 +344,7 @@ void HAL::motor_init(void)
     // downsampling
     motor.monitor_downsample = 100; // default 10
     
-    actMotorStatus = new Account("MotorStatus", AccountSystem::Broker(), sizeof(int32_t), nullptr);
+    actMotorStatus = new Account("MotorStatus", AccountSystem::Broker(), sizeof(MotorStatusInfo), nullptr);
 
     commander.add('C', onPid, "PID vel");
     commander.add('M', onMotor, "my motor");
