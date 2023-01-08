@@ -74,13 +74,13 @@ static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     data->enc_diff = 0;
     if (now_num > old_num)
     {
-        data->enc_diff--;
+        data->enc_diff++;
         old_num = HAL::get_motor_position();
         // update_ws2812_status(WS2812_ROLL, 10);
     }
     else if (now_num < old_num)
     {
-        data->enc_diff++;
+        data->enc_diff--;
         old_num = HAL::get_motor_position();
         // update_ws2812_status(WS2812_ROLL, 10);
     }
