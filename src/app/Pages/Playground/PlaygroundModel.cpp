@@ -23,7 +23,7 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
     playgroundMode = mode;
 	switch (playgroundMode)
 	{
-	case PLAYGROUND_MODE_UNBOUND:
+	case PLAYGROUND_MODE_FINE_DETENTS:
 	    // This mode is default
         MAX_VALUE = 100;
         MIN_VALUE = 0;
@@ -31,6 +31,11 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 		break;
 	case PLAYGROUND_MODE_BOUND:
 	    MAX_VALUE = 12;
+        MIN_VALUE = 0;
+        knob_value = 0;
+        break;
+    case PLAYGROUND_MODE_ON_OFF:
+	    MAX_VALUE = 1;
         MIN_VALUE = 0;
         knob_value = 0;
         break;
@@ -92,6 +97,7 @@ void PlaygroundModel::Init()
     account->SetEventCallback(onEvent);
     account->Subscribe("MotorStatus");
     account->Subscribe("Motor");
+    playgroundMode = 0;
     
 }
 

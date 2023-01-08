@@ -126,7 +126,7 @@ void Menu::onEvent(lv_event_t* event)
 
 	if (code == LV_EVENT_PRESSED)
 	{
-		instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
+		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 		instance->Manager->Push("Pages/Playground");
 	}
 }

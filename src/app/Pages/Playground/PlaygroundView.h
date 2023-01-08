@@ -5,9 +5,10 @@
 #include "../Page.h"
 
 enum PLAYGROUND_MODE {
-    PLAYGROUND_MODE_UNBOUND = MOTOR_UNBOUND_NO_DETENTS,
+    PLAYGROUND_MODE_FINE_DETENTS = MOTOR_UNBOUND_FINE_DETENTS,
     PLAYGROUND_MODE_BOUND = MOTOR_BOUND_0_12_NO_DETENTS,
-    PLAYGROUND_MODE_MULTI_RCV = MOTOR_COARSE_DETENTS,
+    PLAYGROUND_MODE_ON_OFF = MOTOR_ON_OFF_STRONG_DETENTS,
+    PLAYGROUND_MODE_MAX,
 };
 
 typedef struct {
@@ -23,6 +24,7 @@ class PlaygroundView
 {
 public:
     void Create(lv_obj_t* root);
+    void Delete();
     void UpdateView(PlaygroundMotorInfo *info);
     void SetPlaygroundMode(int16_t mode);
     int16_t playgroundMode;
@@ -49,8 +51,8 @@ public:
     } style;
 
 private:
-    void CreateBoundView(void);
-    void BoundView(void);
+    void OnOffView(void);
+    void BoundZeroView(void);
 };
 
 }

@@ -31,10 +31,11 @@ struct XKnobConfig {
 
 typedef enum
 {
+    MOTOR_UNBOUND_FINE_DETENTS,        // Fine values\nWith detents
     MOTOR_UNBOUND_NO_DETENTS,
+    MOTOR_UNBOUND_COARSE_DETENTS, // Coarse values\nStrong detents\n unbound
     MOTOR_BOUND_0_12_NO_DETENTS,
     MOTOR_COARSE_DETENTS,       // Coarse values\nStrong detents
-    MOTOR_FINE_DETENTS,        // Fine values\nWith detents
     MOTOR_FINE_NO_DETENTS,     // Fine values\nNo detents
     MOTOR_ON_OFF_STRONG_DETENTS,             // "On/off\nStrong detent"
     MOTOR_MAX_MODES, //

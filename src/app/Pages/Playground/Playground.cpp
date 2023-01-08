@@ -13,8 +13,8 @@ Playground::~Playground()
 
 void Playground::onCustomAttrConfig()
 {
-	SetCustomCacheEnable(true);
-	SetCustomLoadAnimType(PageManager::LOAD_ANIM_OVER_BOTTOM, 500, lv_anim_path_bounce);
+	SetCustomCacheEnable(false);
+	// SetCustomLoadAnimType(PageManager::LOAD_ANIM_OVER_BOTTOM, 500, lv_anim_path_bounce);
 }
 
 void Playground::onViewLoad()
@@ -38,6 +38,9 @@ void Playground::onViewWillAppear()
 {
 
 	// lv_obj_set_style_bg_color(root, lv_color_white(), LV_PART_MAIN);
+	Model.ChangeMotorMode(PLAYGROUND_MODE_FINE_DETENTS);
+	Model.SetPlaygroundMode(PLAYGROUND_MODE_FINE_DETENTS);
+	View.SetPlaygroundMode(PLAYGROUND_MODE_FINE_DETENTS);
 
 	timer = lv_timer_create(onTimerUpdate, 10, this);
 }
@@ -59,7 +62,7 @@ void Playground::onViewDidDisappear()
 
 void Playground::onViewDidUnload()
 {
-	// View.Delete();
+	View.Delete();
 	Model.Deinit();
 
 }
@@ -94,12 +97,34 @@ void Playground::onEvent(lv_event_t* event)
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Playground*)lv_obj_get_user_data(obj);
 
-	if (code == LV_EVENT_PRESSED)
-	{
-		instance->Model.ChangeMotorMode(PLAYGROUND_MODE_BOUND);
-		instance->Model.SetPlaygroundMode(PLAYGROUND_MODE_BOUND);
-		instance->View.SetPlaygroundMode(PLAYGROUND_MODE_BOUND);
+	if (code == LV_EVENT_PRESSED) {
+		int next_mod = 0;
+		switch (instance->Model.playgroundMode)
+		{
+		case PLAYGROUND_MODE_FINE_DETENTS:
+			next_mod = PLAYGROUND_MODE_BOUND;
+			break;
+		case PLAYGROUND_MODE_BOUND:
+			next_mod = PLAYGROUND_MODE_ON_OFF;
+			break;
+		case PLAYGROUND_MODE_ON_OFF:
+			next_mod = PLAYGROUND_MODE_MAX;  // END
+			break; 
+		default:
+			break;
+		}
 		
-		
+		if (next_mod != PLAYGROUND_MODE_MAX) {
+			instance->Model.ChangeMotorMode(next_mod);
+			instance->Model.SetPlaygroundMode(next_mod);
+			instance->View.SetPlaygroundMode(next_mod);
+		} else {
+			instance->Model.ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
+			instance->Manager->Pop();
+		}
+			
+	} else if (code == LV_EVENT_LONG_PRESSED) {
+		instance->Model.ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
+		instance->Manager->Pop();
 	}
 }

@@ -21,7 +21,15 @@ static XKnobConfig x_knob_configs[] = {
     // float endstop_strength_unit;  
     // float snap_point;           
     // char descriptor[50]; 
-
+    [MOTOR_UNBOUND_FINE_DETENTS] = {
+        0,
+        0,
+        1 * PI / 180,
+        1,
+        1,
+        1.1,
+        "Fine values\nWith detents", //任意运动的控制  有阻尼 类似于机械旋钮
+    },
     [MOTOR_UNBOUND_NO_DETENTS] = {
         0,
         0,
@@ -30,6 +38,15 @@ static XKnobConfig x_knob_configs[] = {
         0.1,
         1.1,
         "Unbounded\nNo detents", //无限制  不制动
+    },
+    [MOTOR_UNBOUND_COARSE_DETENTS] = {
+        .num_positions = 0,
+        .position = 0,
+        .position_width_radians = 8.225806452 * _PI / 180,
+        .detent_strength_unit = 2.3,
+        .endstop_strength_unit = 1,
+        .snap_point = 1.1,
+        "Fine values\nWith detents\nUnbound"
     },
     [MOTOR_BOUND_0_12_NO_DETENTS]= {
         13,
@@ -49,15 +66,7 @@ static XKnobConfig x_knob_configs[] = {
         1.1,
         "Coarse values\nStrong detents", //粗糙的棘轮 强阻尼
     },
-    [MOTOR_FINE_DETENTS] = {
-        0,
-        0,
-        1 * PI / 180,
-        1,
-        1,
-        1.1,
-        "Fine values\nWith detents", //任意运动的控制  有阻尼 类似于机械旋钮
-    },
+
     [MOTOR_FINE_NO_DETENTS] = {
         256,
         127,
@@ -76,10 +85,11 @@ static XKnobConfig x_knob_configs[] = {
         0.55,                    // Note the snap point is slightly past the midpoint (0.5); compare to normal detents which use a snap point *past* the next value (i.e. > 1)
         "On/off\nStrong detent", //模拟开关  强制动
     },
+
 };
 
 XKnobConfig motor_config = {
-    .num_positions = 32,
+    .num_positions = 0,
     .position = 0,
     .position_width_radians = 8.225806452 * _PI / 180,
     .detent_strength_unit = 2.3,
