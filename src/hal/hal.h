@@ -6,6 +6,11 @@
 #include "config.h"
 #include "CommonMacro.h"
 
+typedef enum {
+    SUPER_DIAL_LEFT = -1,
+    SUPER_DIAL_RIGHT= 1,
+} SuperDialMotion;
+
 namespace HAL
 {
     void Init();
@@ -20,6 +25,9 @@ namespace HAL
     int get_motor_position(void);
     void update_motor_mode(int mode);
     void motor_shake(int strength, int delay_time);
+
+    void super_dial_init(void);
+    void super_dial_update(SuperDialMotion direction);
 }
 
 
