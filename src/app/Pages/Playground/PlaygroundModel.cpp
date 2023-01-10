@@ -2,10 +2,13 @@
 #include "App/Accounts/Account_Master.h"
 #include <Arduino.h>
 #include "hal/motor.h"
+#include "hal/hal.h"
+
 using namespace Page;
 static int32_t knob_value = 50;
 static int now_pos = 0;
 static int last_pos = 0;
+static int konb_direction = 0;
 static bool is_outbound = false;
 static int32_t arc_offset = 0;   // 超出界限时显示的 arch 长度
 static int32_t MAX_VALUE = 100;
@@ -16,6 +19,7 @@ void PlaygroundModel::GetKnobStatus(PlaygroundMotorInfo *info)
     info->xkonb_value = knob_value;
     info->motor_pos = now_pos;
     info->angle_offset = arc_offset;
+    info->konb_direction = konb_direction;
 }
 
 void PlaygroundModel::SetPlaygroundMode(int16_t mode)
@@ -47,7 +51,7 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 
 void PlaygroundModel::ChangeMotorMode(int mode)
 {
-    Serial.printf("MenuModel: Change Motor Mode\n");
+    Serial.printf("MenuModel: Change Motor Mode [%d]\n", mode);
     AccountSystem::Motor_Info_t info;
     info.cmd = AccountSystem::MOTOR_CMD_CHANGE_MODE;
     info.motor_mode = mode;
@@ -67,11 +71,12 @@ static int onEvent(Account* account, Account::EventParam_t* param)
     } else {
         arc_offset = 0;
     }
-    Serial.printf("now_pos:%d, last_pos: %d knob_value:%d, arch offset: %f\n", 
-            now_pos, last_pos, knob_value, info->angle_offset);
+    // Serial.printf("now_pos:%d, last_pos: %d knob_value:%d, arch offset: %f\n", 
+    //         now_pos, last_pos, knob_value, info->angle_offset);
     if (now_pos > last_pos)
     {
         knob_value++;
+        konb_direction = SUPER_DIAL_RIGHT;
         if (knob_value > MAX_VALUE) {
             knob_value = MAX_VALUE;
         }
@@ -80,6 +85,7 @@ static int onEvent(Account* account, Account::EventParam_t* param)
     else if (now_pos < last_pos)
     {
         knob_value--;
+        konb_direction = SUPER_DIAL_LEFT;
         if (knob_value < MIN_VALUE) {
             knob_value = MIN_VALUE;
         }

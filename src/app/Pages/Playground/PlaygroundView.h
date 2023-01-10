@@ -11,10 +11,17 @@ enum PLAYGROUND_MODE {
     PLAYGROUND_MODE_MAX,
 };
 
+enum APP_MODE {
+    APP_MODE_MIN = PLAYGROUND_MODE_MAX,
+    APP_MODE_SUPER_DIAL = APP_MODE_MIN + MOTOR_UNBOUND_FINE_DETENTS,
+    APP_MODE_MAX,
+};
+
 typedef struct {
     int32_t xkonb_value;
     int32_t motor_pos;
     int32_t angle_offset;
+    int16_t konb_direction;
 }PlaygroundMotorInfo;
 
 namespace Page
@@ -53,6 +60,7 @@ public:
 private:
     void OnOffView(void);
     void BoundZeroView(void);
+    void UpdateBackgroundView(PlaygroundMotorInfo *info);
 };
 
 }

@@ -16,8 +16,6 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 	switch (playgroundMode) {
 		case PLAYGROUND_MODE_FINE_DETENTS:
 			// This mode is default
-			MIN_VALUE = 0;
-			MAX_VALUE = 100;
 			break;
 		case PLAYGROUND_MODE_BOUND:
 		    MIN_VALUE = 0;
@@ -39,32 +37,34 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 
 }
 
-void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
-
+inline void PlaygroundView::UpdateBackgroundView(PlaygroundMotorInfo *info) 
 {
-	lv_label_set_text_fmt(
-		ui.lable_value,
-		"%d",
-		info->xkonb_value
-	);
+	// lv_style_set_bg_main_stop(&style.meter, 255-xkonb_value);
+	// lv_style_set_bg_grad_stop(&style.meter, 255-xkonb_value);
+	int value_map = map(info->xkonb_value, 0, MAX_VALUE, 0, 255);
+	lv_obj_set_style_bg_main_stop(ui.meter, 255 - value_map, 0);
+	lv_obj_set_style_bg_grad_stop(ui.meter, 255 - value_map, 0);
+}
+
+void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
+{
+	int _value = 0;
 	int32_t motor_pos = info->motor_pos;
 	motor_pos = motor_pos % 360;
 	if (motor_pos < 0) {
 		motor_pos = 360 + motor_pos;
 	}
 	lv_meter_set_indicator_value(ui.meter, ui.nd_img_circle, motor_pos);
-	// lv_style_set_bg_main_stop(&style.meter, 255-xkonb_value);
-	// lv_style_set_bg_grad_stop(&style.meter, 255-xkonb_value);
-	int value_map = map(info->xkonb_value, 0, MAX_VALUE, 0, 255);
-	lv_obj_set_style_bg_main_stop(ui.meter, 255 - value_map, 0);
-	lv_obj_set_style_bg_grad_stop(ui.meter, 255 - value_map, 0);
-
 
 	switch (playgroundMode) {
 		case PLAYGROUND_MODE_FINE_DETENTS:
 	    	// This mode is default
+			_value = info->motor_pos;
 			break;
 		case PLAYGROUND_MODE_BOUND:
+			_value = info->xkonb_value;
+			UpdateBackgroundView(info);
+			
 			if (info->angle_offset != 0) {
 				if (info->xkonb_value == MIN_VALUE) {
 					lv_meter_set_indicator_start_value(ui.meter, ui.arc, SCALE_LEFT_BOUND_TICKS - ARC_START_ROTATION - info->angle_offset);
@@ -80,9 +80,19 @@ void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
 			}
 			
 			break;
+		case PLAYGROUND_MODE_ON_OFF:
+			_value = info->xkonb_value;
+			UpdateBackgroundView(info);
+			break;
 		default:
 			break;
 	}
+
+	lv_label_set_text_fmt(
+		ui.lable_value,
+		"%d",
+		_value
+	);
 }
 
 void PlaygroundView::OnOffView(void)
@@ -156,8 +166,8 @@ void PlaygroundView::Create(lv_obj_t* root)
 	lv_style_set_bg_grad_color(&style.meter, lv_color_make(128,0,128));
 	lv_style_set_bg_grad_dir(&style.meter, LV_GRAD_DIR_VER);
 	lv_style_set_bg_opa(&style.meter, 255);
-	lv_style_set_bg_main_stop(&style.meter, 200);
-	lv_style_set_bg_grad_stop(&style.meter, 200);
+	lv_style_set_bg_main_stop(&style.meter, 255);
+	lv_style_set_bg_grad_stop(&style.meter, 255);
 	// lv_style_set_border_color(&style.meter, lv_color_make(0x12, 0x11, 0x12));
 	lv_style_set_border_width(&style.meter, 0);
 	lv_style_set_border_opa(&style.meter, 255);
