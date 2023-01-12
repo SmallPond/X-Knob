@@ -9,7 +9,10 @@ static int32_t SCALE_LEFT_BOUND_TICKS = 200;
 static int32_t SCALE_ANGLE_RANGE = 140;
 static int32_t SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
 static int32_t ARC_START_ROTATION = 180;
-
+/*
+ * 默认视图显示： 圆点，原点所在位置 label_value
+ * 此函数根据需要增加或 hidden 对象
+*/
 void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 {
 	playgroundMode = mode;
@@ -31,6 +34,8 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 			SCALE_LEFT_BOUND_TICKS = 240;
 			SCALE_ANGLE_RANGE = 60;
 			OnOffView();
+		case APP_MODE_SUPER_DIAL:
+			SuperDialView();
 		default:
 			break;
 	}
@@ -46,7 +51,7 @@ inline void PlaygroundView::UpdateBackgroundView(PlaygroundMotorInfo *info)
 	lv_obj_set_style_bg_grad_stop(ui.meter, 255 - value_map, 0);
 }
 
-void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
+void Page::PlaygroundView::UpdatePlaygroundView(PlaygroundMotorInfo *info)
 {
 	int _value = 0;
 	int32_t motor_pos = info->motor_pos;
@@ -84,6 +89,8 @@ void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
 			_value = info->xkonb_value;
 			UpdateBackgroundView(info);
 			break;
+		case APP_MODE_SUPER_DIAL:
+			break;
 		default:
 			break;
 	}
@@ -95,13 +102,16 @@ void Page::PlaygroundView::UpdateView(PlaygroundMotorInfo *info)
 	);
 }
 
+void PlaygroundView::SuperDialView(void)
+{
+	lv_obj_add_flag(ui.lable_value, LV_OBJ_FLAG_HIDDEN);
+}
+
 void PlaygroundView::OnOffView(void)
 {
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 3, 2, 0, lv_color_make(0xff, 0xff, 0xff));
 	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 2, 4, 20, lv_color_make(0xff, 0xff, 0xff), 10);
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 1, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
-
-	
 }
 
 void PlaygroundView::BoundZeroView(void)

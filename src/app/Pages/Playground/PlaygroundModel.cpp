@@ -25,6 +25,8 @@ void PlaygroundModel::GetKnobStatus(PlaygroundMotorInfo *info)
 void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 {
     playgroundMode = mode;
+    ChangeMotorMode(playgroundMode);
+    knob_value = 0;
 	switch (playgroundMode)
 	{
 	case PLAYGROUND_MODE_FINE_DETENTS:
@@ -36,12 +38,14 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 	case PLAYGROUND_MODE_BOUND:
 	    MAX_VALUE = 12;
         MIN_VALUE = 0;
-        knob_value = 0;
+        
         break;
     case PLAYGROUND_MODE_ON_OFF:
 	    MAX_VALUE = 1;
         MIN_VALUE = 0;
-        knob_value = 0;
+
+        break;
+    case APP_MODE_SUPER_DIAL:
         break;
 	default:
 		break;
