@@ -300,7 +300,7 @@ void TaskMotorUpdate(void *pvParameters)
             #endif
             motor.move(torque);
         }
-        motor.monitor();
+        // motor.monitor();
         commander.run();
         motor_status_publish(out_of_bounds);
         // Serial.println(motor_config.position);
@@ -349,15 +349,15 @@ void HAL::motor_init(void)
     // motor.controller = MotionControlType::torque;
     // update_motor_status(MOTOR_INIT_END);
 
-    motor.useMonitoring(Serial);
-    motor.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE; 
+    // motor.useMonitoring(Serial);
+    // motor.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE; 
     // downsampling
-    motor.monitor_downsample = 100; // default 10
+    // motor.monitor_downsample = 100; // default 10
     
     actMotorStatus = new Account("MotorStatus", AccountSystem::Broker(), sizeof(MotorStatusInfo), nullptr);
 
-    commander.add('C', onPid, "PID vel");
-    commander.add('M', onMotor, "my motor");
+    // commander.add('C', onPid, "PID vel");
+    // commander.add('M', onMotor, "my motor");
     xTaskCreatePinnedToCore(
         TaskMotorUpdate,
         "MotorThread",
