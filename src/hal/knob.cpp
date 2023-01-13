@@ -26,7 +26,7 @@ bool HAL::encoder_is_pushed(void)
     // }
     // return false;
     if (digitalRead(PUSH_BUTTON_PIN) == LOW) {
-        Serial.printf("Push button Pressed\n");
+        // Serial.printf("Push button Pressed\n");
         return true;
     } 
     return false;

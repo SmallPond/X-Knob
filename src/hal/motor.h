@@ -33,6 +33,7 @@ typedef enum
 {
     MOTOR_UNBOUND_FINE_DETENTS,        // Fine values\nWith detents
     MOTOR_UNBOUND_NO_DETENTS,
+    MOTOR_SUPER_DIAL, 
     MOTOR_UNBOUND_COARSE_DETENTS, // Coarse values\nStrong detents\n unbound
     MOTOR_BOUND_0_12_NO_DETENTS,
     MOTOR_COARSE_DETENTS,       // Coarse values\nStrong detents

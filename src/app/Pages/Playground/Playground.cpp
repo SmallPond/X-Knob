@@ -17,7 +17,7 @@ app_mode_config_t app_config[] = {
 		.motor_mode = MOTOR_ON_OFF_STRONG_DETENTS,
 	},
 	[APP_MODE_SUPER_DIAL] = {
-		.motor_mode = MOTOR_UNBOUND_FINE_DETENTS,
+		.motor_mode = MOTOR_SUPER_DIAL,
 	},
 };
 

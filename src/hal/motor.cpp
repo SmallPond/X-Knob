@@ -25,7 +25,7 @@ static XKnobConfig x_knob_configs[] = {
         0,
         0,
         1 * PI / 180,
-        1,
+        2,
         1,
         1.1,
         "Fine values\nWith detents", //任意运动的控制  有阻尼 类似于机械旋钮
@@ -38,6 +38,15 @@ static XKnobConfig x_knob_configs[] = {
         0.1,
         1.1,
         "Unbounded\nNo detents", //无限制  不制动
+    },
+    [MOTOR_SUPER_DIAL] = {
+        0,
+        0,
+        5 * PI / 180,
+        2,
+        1,
+        1.1,
+        "Super Dial", //无限制  不制动
     },
     [MOTOR_UNBOUND_COARSE_DETENTS] = {
         .num_positions = 0,
