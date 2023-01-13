@@ -18,7 +18,7 @@ void StartupModel::DeInit()
 
 void StartupModel::PlayMusic(const char* music)
 {
-    AccountSystem::MusicPlayer_Info_t info;
-    info.music = music;
-    account->Notify("MusicPlayer", &info, sizeof(info));
+    // AccountSystem::MusicPlayer_Info_t info;
+    // info.music = music;
+    // account->Notify("MusicPlayer", &info, sizeof(info));
 }

@@ -7,6 +7,9 @@ typedef struct {
 } app_mode_config_t;
 
 app_mode_config_t app_config[] = {
+	[PLAYGROUND_MODE_NO_EFFECTS] = {
+		.motor_mode = MOTOR_UNBOUND_NO_DETENTS,
+	},
 	[PLAYGROUND_MODE_FINE_DETENTS] = {
 		.motor_mode = MOTOR_UNBOUND_FINE_DETENTS,
 	},
@@ -59,7 +62,7 @@ void Playground::onViewDidLoad()
 
 void Playground::onViewWillAppear()
 {
-	app = PLAYGROUND_MODE_FINE_DETENTS;  // default 
+	app = PLAYGROUND_MODE_NO_EFFECTS;  // default 
 	if (priv.Stash.ptr) {
 		app = *((int16_t *)priv.Stash.ptr);
 		Serial.printf("Playground: app = %d\n", app);

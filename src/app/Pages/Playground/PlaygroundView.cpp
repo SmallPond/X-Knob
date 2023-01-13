@@ -17,6 +17,8 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 {
 	playgroundMode = mode;
 	switch (playgroundMode) {
+		case PLAYGROUND_MODE_NO_EFFECTS:
+			break;
 		case PLAYGROUND_MODE_FINE_DETENTS:
 			// This mode is default
 			break;
@@ -62,6 +64,8 @@ void Page::PlaygroundView::UpdatePlaygroundView(PlaygroundMotorInfo *info)
 	lv_meter_set_indicator_value(ui.meter, ui.nd_img_circle, motor_pos);
 
 	switch (playgroundMode) {
+		case PLAYGROUND_MODE_NO_EFFECTS:
+			break;
 		case PLAYGROUND_MODE_FINE_DETENTS:
 	    	// This mode is default
 			_value = info->motor_pos;

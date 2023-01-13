@@ -33,7 +33,7 @@ static XKnobConfig x_knob_configs[] = {
     [MOTOR_UNBOUND_NO_DETENTS] = {
         0,
         0,
-        10 * PI / 180,
+        1 * PI / 180,
         0,
         0.1,
         1.1,
