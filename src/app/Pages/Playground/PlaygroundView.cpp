@@ -43,7 +43,16 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 	}
 
 }
-
+void Page::PlaygroundView::UpdateSuperDialView(bool isConnected)
+{
+	static bool is_connected = false;
+	if (isConnected != is_connected) {
+		lv_color_t color = isConnected ? lv_color_make(0x00, 0x82, 0xfc):lv_color_white();
+		lv_obj_set_style_img_recolor_opa(ui.img_super_dial, LV_OPA_COVER, 0);
+		lv_obj_set_style_img_recolor(ui.img_super_dial, color, 0);
+		is_connected = isConnected;
+	}
+}
 inline void PlaygroundView::UpdateBackgroundView(PlaygroundMotorInfo *info) 
 {
 	// lv_style_set_bg_main_stop(&style.meter, 255-xkonb_value);
@@ -109,6 +118,7 @@ void Page::PlaygroundView::UpdatePlaygroundView(PlaygroundMotorInfo *info)
 void PlaygroundView::SuperDialView(void)
 {
 	lv_obj_add_flag(ui.lable_value, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(ui.img_super_dial, LV_OBJ_FLAG_HIDDEN);
 }
 
 void PlaygroundView::OnOffView(void)
@@ -220,6 +230,12 @@ void PlaygroundView::Create(lv_obj_t* root)
 	lv_style_set_pad_top(&lable_style, 8);
 	lv_style_set_pad_bottom(&lable_style, 0);
 	lv_obj_add_style(ui.lable_value, &lable_style, LV_PART_MAIN|LV_STATE_DEFAULT);
+
+	ui.img_super_dial = lv_img_create(root);
+    lv_img_set_src(ui.img_super_dial, Resource.GetImage("dialpad"));
+	lv_obj_align(ui.img_super_dial, LV_ALIGN_CENTER, 0, 0);
+	lv_obj_add_flag(ui.img_super_dial, LV_OBJ_FLAG_HIDDEN);
+
 
 	ui.group = lv_group_create();
 	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), ui.group);

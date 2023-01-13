@@ -23,6 +23,7 @@ public:
     void UpdatePlaygroundView(PlaygroundMotorInfo *info);
     void SetPlaygroundMode(int16_t mode);
     int16_t playgroundMode;
+    void UpdateSuperDialView(bool isConnected);
 
 
 public:

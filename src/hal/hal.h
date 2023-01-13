@@ -31,6 +31,7 @@ namespace HAL
     void super_dial_update(SuperDialMotion direction);
     void suer_dial_release(void);
     void suer_dial_press(void);
+    bool super_dial_is_connected(void);
 }
 
 

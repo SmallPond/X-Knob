@@ -114,6 +114,9 @@ void Playground::Update()
 	if (app == APP_MODE_SUPER_DIAL && info.konb_direction != SUPER_DIAL_NULL) {
 		HAL::super_dial_update(info.konb_direction);
 	}
+	if (app == APP_MODE_SUPER_DIAL ) {
+		View.UpdateSuperDialView(HAL::super_dial_is_connected());
+	}
 	View.UpdatePlaygroundView(&info);
 }
 

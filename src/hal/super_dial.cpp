@@ -10,6 +10,11 @@ void HAL::super_dial_init(void)
     bleKeyboard.begin();
 }
 
+bool HAL::super_dial_is_connected(void)
+{
+    return bleKeyboard.isConnected();
+}
+
 void HAL::suer_dial_press(void)
 {
     bleKeyboard.sendDialReport(DIAL_PRESS);
