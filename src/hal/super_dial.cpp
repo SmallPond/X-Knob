@@ -10,6 +10,17 @@ void HAL::super_dial_init(void)
     bleKeyboard.begin();
 }
 
+void HAL::suer_dial_press(void)
+{
+    bleKeyboard.sendDialReport(DIAL_PRESS);
+}
+
+void HAL::suer_dial_release(void)
+{
+    bleKeyboard.sendDialReport(DIAL_RELEASE);
+}
+
+
 void HAL::super_dial_update(SuperDialMotion direction)
 {
     if (bleKeyboard.isConnected()) {

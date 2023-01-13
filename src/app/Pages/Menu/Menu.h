@@ -26,10 +26,10 @@ public:
 
 private:
     void Update();
-    void AttachEvent(lv_obj_t* obj);
+    void AttachEvent(lv_obj_t* obj, lv_event_cb_t event_cb);
     static void onTimerUpdate(lv_timer_t* timer);
-    static void onEvent(lv_event_t* event);
-
+    static void onPlaygroundEvent(lv_event_t* event);
+    static void onSuperDialEvent(lv_event_t* event);
 private:
     MenuView View;
     MenuModel Model;

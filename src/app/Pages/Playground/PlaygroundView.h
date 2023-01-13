@@ -9,7 +9,7 @@ typedef struct {
     int32_t xkonb_value;
     int32_t motor_pos;
     int32_t angle_offset;
-    int16_t konb_direction;
+    SuperDialMotion konb_direction;
 }PlaygroundMotorInfo;
 
 namespace Page
@@ -35,7 +35,7 @@ public:
         lv_meter_scale_t* scale_arc;   // arc 的刻度
         lv_meter_indicator_t* arc;
         lv_group_t* group;
-
+        lv_obj_t* img_super_dial;
 
     } ui;
 

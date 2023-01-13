@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "App/Configs/Version.h"
 #include "hal/motor.h"
+#include "app/app.h"
 using namespace Page;
 
 Menu::Menu()
@@ -21,9 +22,10 @@ void Menu::onViewLoad()
 {
 	Model.Init();
 	View.Create(root);
-	AttachEvent(root);
-	AttachEvent(View.ui.switches.icon);
-	AttachEvent(View.ui.dialpad.icon);
+	AttachEvent(root, onPlaygroundEvent);
+	AttachEvent(View.ui.dialpad.icon, onSuperDialEvent);
+	AttachEvent(View.ui.switches.icon, onPlaygroundEvent);
+	
 	// AttachEvent(View.ui.system.icon);
 	// AttachEvent(View.ui.imu.icon);
 	// AttachEvent(View.ui.battery.icon);
@@ -68,10 +70,10 @@ void Menu::onViewDidUnload()
 	Model.Deinit();
 }
 
-void Menu::AttachEvent(lv_obj_t* obj)
+void Menu::AttachEvent(lv_obj_t* obj, lv_event_cb_t event_cb)
 {
 	lv_obj_set_user_data(obj, this);
-	lv_obj_add_event_cb(obj, onEvent, LV_EVENT_PRESSED, this);
+	lv_obj_add_event_cb(obj, event_cb, LV_EVENT_PRESSED, this);
 }
 
 void Menu::Update()
@@ -118,7 +120,7 @@ void Menu::onTimerUpdate(lv_timer_t* timer)
 	instance->Update();
 }
 
-void Menu::onEvent(lv_event_t* event)
+void Menu::onPlaygroundEvent(lv_event_t* event)
 {
 	lv_obj_t* obj = lv_event_get_target(event);
 	lv_event_code_t code = lv_event_get_code(event);
@@ -128,5 +130,22 @@ void Menu::onEvent(lv_event_t* event)
 	{
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 		instance->Manager->Push("Pages/Playground");
+	}
+}
+
+void Menu::onSuperDialEvent(lv_event_t* event)
+{
+	lv_obj_t* obj = lv_event_get_target(event);
+	lv_event_code_t code = lv_event_get_code(event);
+	auto* instance = (Menu*)lv_obj_get_user_data(obj);
+
+	if (code == LV_EVENT_PRESSED)
+	{
+		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
+		int16_t mode = APP_MODE_SUPER_DIAL;
+		Stash_t stash;
+		stash.ptr = &mode;
+		stash.size = sizeof(int16_t);
+		instance->Manager->Push("Pages/Playground", &stash);
 	}
 }

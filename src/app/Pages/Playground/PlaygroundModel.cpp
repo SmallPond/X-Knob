@@ -8,7 +8,7 @@ using namespace Page;
 static int32_t knob_value = 50;
 static int now_pos = 0;
 static int last_pos = 0;
-static int konb_direction = 0;
+static SuperDialMotion konb_direction = SUPER_DIAL_NULL;
 static bool is_outbound = false;
 static int32_t arc_offset = 0;   // 超出界限时显示的 arch 长度
 static int32_t MAX_VALUE = 100;
@@ -20,12 +20,12 @@ void PlaygroundModel::GetKnobStatus(PlaygroundMotorInfo *info)
     info->motor_pos = now_pos;
     info->angle_offset = arc_offset;
     info->konb_direction = konb_direction;
+    konb_direction = SUPER_DIAL_NULL;
 }
 
 void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 {
     playgroundMode = mode;
-    ChangeMotorMode(playgroundMode);
     knob_value = 0;
 	switch (playgroundMode)
 	{
@@ -69,7 +69,7 @@ static int onEvent(Account* account, Account::EventParam_t* param)
     
     now_pos = info->position;
     is_outbound = info->is_outbound;
-
+    konb_direction = SUPER_DIAL_NULL;
     if (is_outbound) {
         arc_offset = (int)(info->angle_offset);
     } else {

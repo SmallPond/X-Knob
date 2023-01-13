@@ -108,6 +108,9 @@ void Playground::Update()
 	PlaygroundMotorInfo info;
 	Model.GetKnobStatus(&info);
 	// Serial.printf("xknob_value %d, pos: %d\n", xknob_value, pos);
+	if (app == APP_MODE_SUPER_DIAL && info.konb_direction != SUPER_DIAL_NULL) {
+		HAL::super_dial_update(info.konb_direction);
+	}
 	View.UpdatePlaygroundView(&info);
 }
 
@@ -124,7 +127,8 @@ void Playground::onEvent(lv_event_t* event)
 	lv_obj_t* obj = lv_event_get_target(event);
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Playground*)lv_obj_get_user_data(obj);
-	
+	// if(code >= LV_EVENT_PRESSED && code <= LV_EVENT_KEY)
+	// 	Serial.printf("Playground: event code:%d\n", code);
 	if (code == LV_EVENT_PRESSED) {
 		if(app < PLAYGROUND_MODE_MAX) {
 			int app = instance->Model.playgroundMode + 1;
@@ -139,10 +143,20 @@ void Playground::onEvent(lv_event_t* event)
 				instance->Manager->Pop();
 			}
 		}	
-	} else if (code == LV_EVENT_LONG_PRESSED) {
+	} else if (code == LV_EVENT_SHORT_CLICKED) {
+		if (app == APP_MODE_SUPER_DIAL) {
+			Serial.printf("Playground: press\n");
+			HAL::suer_dial_press();
+		}
+	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
-		Serial.printf("Playground: LV_EVENT_LONG_PRESSED\n");
+		Serial.printf("Playground: LV_EVENT_LONG_PRESSED_REPEAT\n");
 		instance->Model.ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 		instance->Manager->Pop();
+	} else if (code == LV_EVENT_RELEASED) {
+		if (app == APP_MODE_SUPER_DIAL) {
+			Serial.printf("Playground: realse\n");
+			HAL::suer_dial_release();
+		}
 	}
 }
