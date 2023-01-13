@@ -57,6 +57,7 @@ do{\
         IMPORT_IMG(miku);
         IMPORT_IMG(circle_blue);
         IMPORT_IMG(dot_blue);
+        IMPORT_IMG(macos);
     }
 
 } /* extern "C" */
