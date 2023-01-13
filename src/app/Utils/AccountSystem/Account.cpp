@@ -245,15 +245,15 @@ int Account::Publish()
         Account* sub = iter;
         EventCallback_t callback = sub->priv.eventCallback;
 
-        DC_LOG_INFO("pub[%s] push >> data(0x%p)[%d] >> sub[%s]...",
-                    ID, param.data_p, param.size, sub->ID);
+        // DC_LOG_INFO("pub[%s] push >> data(0x%p)[%d] >> sub[%s]...",
+        //            ID, param.data_p, param.size, sub->ID);
 
         if (callback != nullptr)
         {
             param.recv = sub;
             int ret = callback(sub, &param);
 
-            DC_LOG_INFO("push done: %d", ret);
+            // DC_LOG_INFO("push done: %d", ret);
             retval = ret;
         }
         else
