@@ -36,8 +36,10 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 			SCALE_LEFT_BOUND_TICKS = 240;
 			SCALE_ANGLE_RANGE = 60;
 			OnOffView();
+			break;
 		case APP_MODE_SUPER_DIAL:
 			SuperDialView();
+			break;
 		default:
 			break;
 	}
