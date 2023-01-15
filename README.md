@@ -6,10 +6,15 @@
 - 另外，[smart_knob](https://github.com/scottbez1/smartknob) 作者在项目中提到未来想使用 lvgl 来设计 UI，之前我也玩过 X-TRACK，深深被其丝滑 UI 吸引。当时基于[稚晖君的Peak](https://github.com/peng-zhihui/Peak) 修改了部分硬件在 ESP32 上把玩了一番[Deck](https://github.com/SmallPond/Deck)。因此，本项目将会是 Smart Knob + Deck(X-Track UI) 的一个合成版。 
 
 
+### Demo video
+
+[演示视频](https://www.bilibili.com/video/BV1N3411Z764/)
 
 <center class="half">
 <img src="docs/x-knob-sk.jpg" width="50%" height="30%" alt="3d"  /><img src="docs/x-knob-xtrack.jpg" width="50%" height="50%" alt="3d"  />
 </center>
+
+### 3D CAD
 
 <img src="docs/3d.gif" width="50%" height="50%" alt="3d" align=center />
 
