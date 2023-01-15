@@ -3,7 +3,7 @@
 去年（2021）网上冲浪发现了[smart_knob](https://github.com/scottbez1/smartknob)，心动不已。但一番了解后，马上被缺货的“天价”无刷电机劝退😅。最近在刷 B 站时发现 @455555菌 和 虫二大佬（@fywbcchong2）开源的[Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)，这就到我动手玩一玩的时候了🤗。
 
 - [Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)替换了原 [smart_knob](https://github.com/scottbez1/smartknob) 的“昂贵电机”且采用了直筒设计，个人觉得更为美观。
-- 另外，[smart_knob](https://github.com/scottbez1/smartknob) 作者在项目中提到未来想使用 lvgl 来设计 UI，之前我也玩过 X-TRACK，深深被其丝滑 UI 吸引。当时基于[稚晖君的Peak](https://github.com/peng-zhihui/Peak) 修改了部分硬件在 ESP32 上把玩了一番[Deck](https://github.com/SmallPond/Deck)。因此，本项目将会是 Smart Knob + Deck(X-Track UI) 的一个合成版。 
+- 另外，[smart_knob](https://github.com/scottbez1/smartknob) 作者在项目中提到未来想使用 lvgl 来设计 UI，之前我也玩过 X-TRACK，UI 极其丝滑。当时基于[稚晖君的Peak](https://github.com/peng-zhihui/Peak) 修改了部分硬件在 ESP32 上把玩了一番[Deck](https://github.com/SmallPond/Deck)。因此，本项目将会是 Smart Knob + Deck(X-Track UI) 的一个合成版。故我把它称为 X-Knob。
 
 
 ### Demo video
@@ -25,6 +25,8 @@ X-KNOB 支持的特性：
 - [x] 7 种旋钮模式：边界限制、棘轮、回弹等模式的组合
 - [x] 实现基于 LVGL 框架下 smart-knob 的 UI 
 - [x] Surface Dial 
+
+待支持的特性：
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
 
 
@@ -69,7 +71,7 @@ UI 设计工具：
 - 上下结构件互相摩擦，有一些噪音
 
 电路问题：
-- 需要去掉 USB 接口到 ESP32-S3 GPIO19 和 GPIO20 的两个电容
+- 需要去掉 USB 接口到 ESP32-S3 GPIO19 和 GPIO20 的两个电容，去掉后可正确识别出 USB 串口，可以直接通过改串口下载程序
 
 # 参考项目
 
