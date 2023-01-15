@@ -17,7 +17,7 @@ void HAL::Init()
     motor_init();
 
     knob_init();
-    super_dial_init();
+    // super_dial_init();
 }
 
 

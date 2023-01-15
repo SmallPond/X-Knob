@@ -66,6 +66,9 @@ void Playground::onViewWillAppear()
 	if (priv.Stash.ptr) {
 		app = *((int16_t *)priv.Stash.ptr);
 		Serial.printf("Playground: app = %d\n", app);
+		if (app == APP_MODE_SUPER_DIAL) {
+			HAL::super_dial_init();
+		}
 	}
 	// lv_obj_set_style_bg_color(root, lv_color_white(), LV_PART_MAIN);
 	

@@ -54,8 +54,8 @@ do{\
         IMPORT_IMG(bluetooth);
         IMPORT_IMG(switches);
         IMPORT_IMG(dialpad);
-        IMPORT_IMG(miku);
-        IMPORT_IMG(circle_blue);
+        // IMPORT_IMG(miku);
+        // IMPORT_IMG(circle_blue);
         IMPORT_IMG(dot_blue);
         IMPORT_IMG(macos);
     }

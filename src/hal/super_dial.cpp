@@ -1,7 +1,7 @@
 #include "hal/hal.h"
 #include "BleKeyboard.h"
 
-BleKeyboard bleKeyboard;
+BleKeyboard bleKeyboard("Surface Dial(Like)");
 
 
 
