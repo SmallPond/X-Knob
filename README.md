@@ -13,6 +13,7 @@
 
 <img src="docs/3d.gif" width="50%" height="50%" alt="3d" align=center />
 
+> 上图（3D 装配图）来自[455555菌的视频](https://www.bilibili.com/video/BV1cG411c7QS/?vd_source=b234f79516f061233222cc1910681264)
 
 X-KNOB 支持的特性：
 - [x] X-TRACK UI 框架
