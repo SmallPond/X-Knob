@@ -1,5 +1,7 @@
 #include "Playground.h"
 #include <Arduino.h>
+#include "SurfaceDialView.h"
+#include "SurfaceDialModel.h"
 using namespace Page;
 
 typedef struct {
@@ -43,15 +45,33 @@ void Playground::onCustomAttrConfig()
 
 void Playground::onViewLoad()
 {
+	app = PLAYGROUND_MODE_NO_EFFECTS;  // default 
+	if (priv.Stash.ptr) {
+		app = *((int16_t *)priv.Stash.ptr);
+		Serial.printf("Playground: app = %d\n", app);
+	}
+	switch (app) {
+		case PLAYGROUND_MODE_NO_EFFECTS:
+			Model = new PlaygroundModel();
+			View = new PlaygroundView();
+			break;
+		case APP_MODE_SUPER_DIAL:
+			Model = (SurfaceDialModel*) new SurfaceDialModel(); 
+			View = (PlaygroundView*) new SurfaceDialView();
+			HAL::surface_dial_init();
+			break;
+		default:
+			break;
+	};
 
-	Model.Init();
-	View.Create(root);
+	Model->Init();
+	View->Create(root);
 
 	
-	// lv_label_set_text(View.ui.labelTitle, Name);
+	// lv_label_set_text(View->ui.labelTitle, Name);
 
 	AttachEvent(root);
-	AttachEvent(View.ui.meter);
+	AttachEvent(View->ui.meter);
 
 }
 
@@ -62,19 +82,11 @@ void Playground::onViewDidLoad()
 
 void Playground::onViewWillAppear()
 {
-	app = PLAYGROUND_MODE_NO_EFFECTS;  // default 
-	if (priv.Stash.ptr) {
-		app = *((int16_t *)priv.Stash.ptr);
-		Serial.printf("Playground: app = %d\n", app);
-		if (app == APP_MODE_SUPER_DIAL) {
-			HAL::super_dial_init();
-		}
-	}
-	// lv_obj_set_style_bg_color(root, lv_color_white(), LV_PART_MAIN);
+
 	
-	Model.ChangeMotorMode(app_config[app].motor_mode);
-	Model.SetPlaygroundMode(app);
-	View.SetPlaygroundMode(app);
+	Model->ChangeMotorMode(app_config[app].motor_mode);
+	Model->SetPlaygroundMode(app);
+	View->SetPlaygroundMode(app);
 
 	timer = lv_timer_create(onTimerUpdate, 10, this);
 }
@@ -96,8 +108,11 @@ void Playground::onViewDidDisappear()
 
 void Playground::onViewDidUnload()
 {
-	View.Delete();
-	Model.Deinit();
+	View->Delete();
+	Model->Deinit();
+
+	delete View;
+	delete Model;
 
 }
 
@@ -107,20 +122,17 @@ void Playground::AttachEvent(lv_obj_t* obj)
 	lv_obj_add_event_cb(obj, onEvent, LV_EVENT_ALL, this);
 }
 
+
+
 void Playground::Update()
 {
-	int32_t pos = 0;
-	int32_t xknob_value = 2;
-	PlaygroundMotorInfo info;
-	Model.GetKnobStatus(&info);
-	// Serial.printf("xknob_value %d, pos: %d\n", xknob_value, pos);
+	PlaygroundInfo info;
+	Model->GetKnobStatus(&info);
 	if (app == APP_MODE_SUPER_DIAL && info.konb_direction != SUPER_DIAL_NULL) {
-		HAL::super_dial_update(info.konb_direction);
+		HAL::surface_dial_update(info.konb_direction);
 	}
-	if (app == APP_MODE_SUPER_DIAL ) {
-		View.UpdateSuperDialView(HAL::super_dial_is_connected());
-	}
-	View.UpdatePlaygroundView(&info);
+
+	View->UpdateView(&info);
 }
 
 
@@ -136,36 +148,35 @@ void Playground::onEvent(lv_event_t* event)
 	lv_obj_t* obj = lv_event_get_target(event);
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Playground*)lv_obj_get_user_data(obj);
-	// if(code >= LV_EVENT_PRESSED && code <= LV_EVENT_KEY)
-	// 	Serial.printf("Playground: event code:%d\n", code);
+
 	if (code == LV_EVENT_PRESSED) {
 		if(app < PLAYGROUND_MODE_MAX) {
-			int app = instance->Model.playgroundMode + 1;
+			int app = instance->Model->app + 1;
 		
 			if (app != PLAYGROUND_MODE_MAX) {
-				instance->Model.ChangeMotorMode(app_config[app].motor_mode);
-				instance->Model.SetPlaygroundMode(app);
-				instance->View.SetPlaygroundMode(app);
+				instance->Model->ChangeMotorMode(app_config[app].motor_mode);
+				instance->Model->SetPlaygroundMode(app);
+				instance->View->SetPlaygroundMode(app);
 			} else {
 				// return to memu
-				instance->Model.ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
+				instance->Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 				instance->Manager->Pop();
 			}
 		}	
 	} else if (code == LV_EVENT_SHORT_CLICKED) {
 		if (app == APP_MODE_SUPER_DIAL) {
 			Serial.printf("Playground: press\n");
-			HAL::suer_dial_press();
+			HAL::surface_dial_press();
 		}
 	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
 		Serial.printf("Playground: LV_EVENT_LONG_PRESSED_REPEAT\n");
-		instance->Model.ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
+		instance->Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 		instance->Manager->Pop();
 	} else if (code == LV_EVENT_RELEASED) {
 		if (app == APP_MODE_SUPER_DIAL) {
 			Serial.printf("Playground: realse\n");
-			HAL::suer_dial_release();
+			HAL::surface_dial_release();
 		}
 	}
 }

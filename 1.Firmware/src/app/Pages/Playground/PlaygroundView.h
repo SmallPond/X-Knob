@@ -10,7 +10,8 @@ typedef struct {
     int32_t motor_pos;
     int32_t angle_offset;
     SuperDialMotion konb_direction;
-}PlaygroundMotorInfo;
+    bool is_ble_connected;
+}PlaygroundInfo;
 
 namespace Page
 {
@@ -18,12 +19,12 @@ namespace Page
 class PlaygroundView
 {
 public:
-    void Create(lv_obj_t* root);
+    virtual void Create(lv_obj_t* root);
     void Delete();
-    void UpdatePlaygroundView(PlaygroundMotorInfo *info);
-    void SetPlaygroundMode(int16_t mode);
-    int16_t playgroundMode;
-    void UpdateSuperDialView(bool isConnected);
+    virtual void UpdateView(PlaygroundInfo *info);
+    virtual void SetPlaygroundMode(int16_t mode);
+    void UpdateBackgroundView(PlaygroundInfo *info); 
+    int16_t app;
 
 
 public:
@@ -36,8 +37,6 @@ public:
         lv_meter_scale_t* scale_arc;   // arc 的刻度
         lv_meter_indicator_t* arc;
         lv_group_t* group;
-        lv_obj_t* img_super_dial;
-
     } ui;
 
     struct
@@ -49,8 +48,6 @@ public:
 private:
     void OnOffView(void);
     void BoundZeroView(void);
-    void UpdateBackgroundView(PlaygroundMotorInfo *info);
-    void SuperDialView(void);
 };
 
 }

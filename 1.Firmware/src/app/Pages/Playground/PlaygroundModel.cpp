@@ -5,16 +5,18 @@
 #include "hal/hal.h"
 
 using namespace Page;
-static int32_t knob_value = 50;
-static int now_pos = 0;
-static int last_pos = 0;
-static SuperDialMotion konb_direction = SUPER_DIAL_NULL;
-static bool is_outbound = false;
-static int32_t arc_offset = 0;   // 超出界限时显示的 arch 长度
-static int32_t MAX_VALUE = 100;
-static int32_t MIN_VALUE = 0;
 
-void PlaygroundModel::GetKnobStatus(PlaygroundMotorInfo *info)
+int32_t MAX_VALUE = 100;
+int32_t MIN_VALUE = 0;
+bool is_outbound = false;
+int32_t arc_offset = 0;   // 超出界限时显示的 arch 长度
+SuperDialMotion konb_direction = SUPER_DIAL_NULL;
+int32_t knob_value = 50;
+int now_pos = 0;
+int last_pos = 0;
+
+
+void PlaygroundModel::GetKnobStatus(PlaygroundInfo *info)
 {
     info->xkonb_value = knob_value;
     info->motor_pos = now_pos;
@@ -25,9 +27,9 @@ void PlaygroundModel::GetKnobStatus(PlaygroundMotorInfo *info)
 
 void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 {
-    playgroundMode = mode;
+    app = mode;
     knob_value = 0;
-	switch (playgroundMode)
+	switch (app)
 	{
     case PLAYGROUND_MODE_NO_EFFECTS:
         break;
@@ -42,9 +44,6 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
     case PLAYGROUND_MODE_ON_OFF:
 	    MAX_VALUE = 1;
         MIN_VALUE = 0;
-
-        break;
-    case APP_MODE_SUPER_DIAL:
         break;
 	default:
 		break;
@@ -62,7 +61,7 @@ void PlaygroundModel::ChangeMotorMode(int mode)
     account->Notify("Motor", &info, sizeof(info));  
 }
 
-static int onEvent(Account* account, Account::EventParam_t* param)
+int onEvent(Account* account, Account::EventParam_t* param)
 {
     MotorStatusInfo *info = (MotorStatusInfo*) (param->data_p);
     
@@ -106,7 +105,7 @@ void PlaygroundModel::Init()
     account->SetEventCallback(onEvent);
     account->Subscribe("MotorStatus");
     account->Subscribe("Motor");
-    playgroundMode = 0;
+    app = PLAYGROUND_MODE_NO_EFFECTS;
     
 }
 

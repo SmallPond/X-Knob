@@ -1,32 +1,32 @@
 #include "hal/hal.h"
 #include "BleKeyboard.h"
 
-BleKeyboard bleKeyboard("Surface Dial(Like)");
+BleKeyboard bleKeyboard("Surface Dial(X)");
 
 
 
-void HAL::super_dial_init(void)
+void HAL::surface_dial_init(void)
 {
     bleKeyboard.begin();
 }
 
-bool HAL::super_dial_is_connected(void)
+bool HAL::surface_dial_is_connected(void)
 {
     return bleKeyboard.isConnected();
 }
 
-void HAL::suer_dial_press(void)
+void HAL::surface_dial_press(void)
 {
     bleKeyboard.sendDialReport(DIAL_PRESS);
 }
 
-void HAL::suer_dial_release(void)
+void HAL::surface_dial_release(void)
 {
     bleKeyboard.sendDialReport(DIAL_RELEASE);
 }
 
 
-void HAL::super_dial_update(SuperDialMotion direction)
+void HAL::surface_dial_update(SuperDialMotion direction)
 {
     if (bleKeyboard.isConnected()) {
 

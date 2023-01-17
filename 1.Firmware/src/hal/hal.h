@@ -27,11 +27,11 @@ namespace HAL
     void update_motor_mode(int mode);
     void motor_shake(int strength, int delay_time);
 
-    void super_dial_init(void);
-    void super_dial_update(SuperDialMotion direction);
-    void suer_dial_release(void);
-    void suer_dial_press(void);
-    bool super_dial_is_connected(void);
+    void surface_dial_init(void);
+    void surface_dial_update(SuperDialMotion direction);
+    void surface_dial_release(void);
+    void surface_dial_press(void);
+    bool surface_dial_is_connected(void);
 }
 
 

@@ -9,18 +9,20 @@
 namespace Page
 {
 
-class SuperDialView: public PlaygroundView
+class SurfaceDialView: public PlaygroundView
 {
 public:
+    SurfaceDialView(){}
     void Create(lv_obj_t* root);
     void Delete();
-    void UpdatePlaygroundView(PlaygroundMotorInfo *info);
+    void UpdateView(PlaygroundInfo *info);
     void SetPlaygroundMode(int16_t mode);
-    int16_t playgroundMode;
 
 
 public:
-
+    struct {
+        lv_obj_t* img_super_dial;
+    }m_ui;
 
 private:
 };

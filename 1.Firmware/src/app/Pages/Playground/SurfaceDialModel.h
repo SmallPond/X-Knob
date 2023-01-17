@@ -1,21 +1,25 @@
-#ifndef __PLAGROUND_MODEL_H
-#define __PLAGROUND_MODEL_H
+#ifndef __SURFACE_DIAL_MODEL_H
+#define __SURFACE_DIAL_MODEL_H
 #include "App/Utils/AccountSystem/Account.h"
 #include "lvgl.h"
 #include "PlaygroundView.h"
+#include "PlaygroundModel.h"
+
 namespace Page
 {
 
-class PlaygroundModel
+class SurfaceDialModel: public PlaygroundModel
 {
 public:
-    int16_t app;
+    SurfaceDialModel();
     void Init();
     void Deinit();
     void Update(void* pg_ui);
-    virtual void GetKnobStatus(PlaygroundInfo *info);
+    void GetKnobStatus(PlaygroundInfo *info);
     void ChangeMotorMode(int mode);
     void SetPlaygroundMode(int16_t mode);
+
+    void onEvent(Account* account, Account::EventParam_t* param);
 private:
     Account* account;
 };

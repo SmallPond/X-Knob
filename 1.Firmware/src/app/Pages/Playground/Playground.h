@@ -36,8 +36,8 @@ private:
     static void onEvent(lv_event_t* event);
 
 private:
-    PlaygroundView View;
-    PlaygroundModel Model;
+    PlaygroundView *View;
+    PlaygroundModel *Model;
     lv_timer_t* timer;
 };
 
