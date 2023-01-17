@@ -1,9 +1,13 @@
 # X-KNOB
 
-去年（2021）网上冲浪发现了 [smart_knob](https://github.com/scottbez1/smartknob)，心动不已。但一番了解后，马上被缺货的“天价”无刷电机劝退😅。最近在刷 B 站时发现 @455555菌 和 虫二大佬（@fywbcchong2）开源的 [Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)，这就到我动手玩一玩的时候了🤗。
+去年（2021）网上冲浪发现了 [smart_knob(SK)](https://github.com/scottbez1/smartknob)，心动不已。但一番了解后，马上被缺货的“天价”无刷电机劝退😅。最近在刷 B 站时发现 @455555菌 和 虫二大佬（@fywbcchong2）开源的 [Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)，这就到我动手玩一玩的时候了🤗。
 
-- [Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5) 替换了原 [smart_knob](https://github.com/scottbez1/smartknob) 的“昂贵电机”且采用了直筒设计，个人觉得更为美观。
-- 另外，[smart_knob](https://github.com/scottbez1/smartknob) 作者在项目中提到未来想使用 lvgl 来设计 UI，之前我也玩过 X-TRACK，UI 极其丝滑。当时基于[稚晖君的 Peak ](https://github.com/peng-zhihui/Peak) 修改了部分硬件在 ESP32 上把玩了一番 [Deck](https://github.com/SmallPond/Deck)。因此，本项目将会是 Smart Knob + Deck(X-Track UI) 的一个合成版。故我把它称为 X-Knob。
+Super Dial 电机旋钮屏替换了原 smart_knob 的“昂贵电机”且采用了直筒设计，个人觉得更为美观。
+
+另外，[smart_knob](https://github.com/scottbez1/smartknob) 作者在项目中提到未来想使用 lvgl 来设计 UI。
+> migrate to LVGL, for better display rendering and easy support for menus, etc. Shouldn't require a full 240x240x24b framebuffer in memory, freeing some for wifi, etc.
+
+巧的是之前我玩过 X-TRACK，UI 极其丝滑。当时基于[稚晖君的 Peak ](https://github.com/peng-zhihui/Peak) 修改了部分硬件在 ESP32 上把玩了一番 [Deck](https://github.com/SmallPond/Deck)。因此，本项目将会是 Smart Knob + X-Track UI 的一个合成版。**故我称为它 X-Knob**。
 
 
 ### Demo video
@@ -22,15 +26,21 @@
 
 > 上图（3D 装配图）来自[455555菌的视频](https://www.bilibili.com/video/BV1cG411c7QS/?vd_source=b234f79516f061233222cc1910681264)
 
+主要硬件列表：
+- 3 块 PCB：主控板 + 驱动板 + 屏幕板
+- MCU: ESP32-S3 WROOM-1U-N16R8
+- 屏幕: 240x240 圆形 LCD GC9A01 (1.28 寸) + 40.0mm 表蒙子 
+- 磁编码器：MT6701CT
+
 X-KNOB 支持的特性：
 - [x] X-TRACK UI 框架
 - [x] 7 种旋钮模式：边界限制、棘轮、回弹等模式的组合
 - [x] 实现基于 LVGL 框架下 smart-knob 的 UI 
 - [x] Surface Dial 
+- [x] 按键按压振动反馈 
 
 待支持的特性：
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
-
 
 # 实现记录
 
@@ -72,7 +82,24 @@ UI 设计工具：
 - 上下结构件互相摩擦，有一些噪音
 
 电路问题：
-- 需要去掉 USB 接口到 ESP32-S3 GPIO19 和 GPIO20 的两个电容，去掉后可正确识别出 USB 串口，可以直接通过改串口下载程序
+- 需要去掉 USB 接口到 ESP32-S3 GPIO19 和 GPIO20 的两个电容（在原理图上是 C17 和 C18，PCB 上的丝印是 C10 和 C11），去掉后可正确识别出 USB 串口，可以直接通过该串口下载程序
+
+## 编译问题
+
+问题：`sdkconfig.h no such file or directory`
+
+原因：ESP32-S3 的支持需要 arduino-esp32 版本 >= 2.0.3，在 platformio 中需要对应安装 Espressif 32 >= 4.4.0 以上，我当前使用的是 5.2.0 版本，查看 platformio 安装目录下的文件`.platformio\platforms\espressif32\platform.json`可看到其对应使用 arduino-esp32 2.0.5 版本。
+
+```c
+    "framework-arduinoespressif32": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~3.20005.0"
+    },
+```
+
+解决方案：`PIO Home -> Platforms -> Updates` 更新版本
 
 # 参考项目
 
