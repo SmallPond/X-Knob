@@ -1,5 +1,7 @@
 # X-KNOB
 
+[中文文档](README.md) ｜ [English](README_EN.md)
+
 去年（2021）网上冲浪发现了 [smart_knob(SK)](https://github.com/scottbez1/smartknob)，心动不已。但一番了解后，马上被缺货的“天价”无刷电机劝退😅。最近在刷 B 站时发现 @455555菌 和 虫二大佬（@fywbcchong2）开源的 [Super Dial 电机旋钮屏](https://oshwhub.com/45coll/a2fff3c71f5d4de2b899c64b152d3da5)，这就到我动手玩一玩的时候了🤗。
 
 Super Dial 电机旋钮屏替换了原 smart_knob 的“昂贵电机”且采用了直筒设计，个人觉得更为美观。
@@ -31,6 +33,7 @@ Super Dial 电机旋钮屏替换了原 smart_knob 的“昂贵电机”且采用
 - MCU: ESP32-S3 WROOM-1U-N16R8
 - 屏幕: 240x240 圆形 LCD GC9A01 (1.28 寸) + 40.0mm 表蒙子 
 - 磁编码器：MT6701CT
+- 3205 无刷直流电机（无限位）（10 RMB）
 
 X-KNOB 支持的特性：
 - [x] X-TRACK UI 框架
@@ -40,8 +43,9 @@ X-KNOB 支持的特性：
 - [x] 按键按压振动反馈 
 
 待支持的特性：
+- [ ] 电源管理：电池管理、系统深度休眠
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
-
+[中文文档](README.md) ｜ [English](README_EN.md)
 # 实现记录
 
 ## LVGL
