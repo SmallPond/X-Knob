@@ -26,32 +26,14 @@ public:
         item_t dialpad;
         item_t switches;
         item_t system;
-        item_t imu;
+        item_t hass;   // home assistant
         item_t battery;
         item_t storage;
         lv_group_t* group;
     } ui;
 
 public:
-    void SetJoints(
-        const char* info
-    );
-    void SetPose6D(
-        const char* info
-    );
-    void SetIMU(
-        const char* info
-    );
-    void SetBattery(
-        int usage,
-        float voltage,
-        const char* state
-    );
-    void SetStorage(
-        const char* detect,
-        const char* size,
-        const char* version
-    );
+
     void SetSystem(
         const char* firmVer,
         const char* authorName,

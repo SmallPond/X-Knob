@@ -80,28 +80,6 @@ void Menu::Update()
 {
 	char buf[64];
 
-	View.SetJoints("0\n0\n80\n");
-
-
-	/* IMU */
-	// Model.GetIMUInfo(buf, sizeof(buf));
-	// View.SetIMU(buf);
-
-	/* Power */
-	// int usage;
-	// float voltage;
-	// Model.GetBatteryInfo(&usage, &voltage, buf, sizeof(buf));
-	// View.SetBattery(usage, voltage, buf);
-
-	/* Storage */
-	// bool detect;
-	// Model.GetStorageInfo(&detect, buf, sizeof(buf));
-	// View.SetStorage(
-	// 	detect ? "YES" : "NO",
-	// 	buf,
-	// 	VERSION_FILESYSTEM
-	// );
-
 	/* System */
 	View.SetSystem(
 		VERSION_FIRMWARE_NAME " " VERSION_SOFTWARE,

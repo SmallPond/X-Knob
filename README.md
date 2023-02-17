@@ -45,7 +45,6 @@ X-KNOB 支持的特性：
 待支持的特性：
 - [ ] 电源管理：电池管理、系统深度休眠
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
-[中文文档](README.md) ｜ [English](README_EN.md)
 # 实现记录
 
 ## LVGL

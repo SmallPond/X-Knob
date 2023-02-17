@@ -30,10 +30,10 @@ void MenuView::Create(lv_obj_t* root)
 		"S-Dial",
 		"dialpad",
 
+		"Surface Dial"
 		"Control\n"
-		"Your\n"
-		"PC\n"
-		"in hand\n"
+		"Your PC\n"
+		"with X-Knob\n"
 	);
 
 	Item_Create(
@@ -51,7 +51,17 @@ void MenuView::Create(lv_obj_t* root)
 
 
 	);
+	Item_Create(
+		&ui.hass,
+		root,
+		"S-Home",
+		"home",
 
+		"Your Smart Home\n"
+		"Light \n"
+		"Fan \n"
+		"Monitor Bar"
+	);
 	// /* Item System */
 	Item_Create(
 		&ui.system,
@@ -68,23 +78,6 @@ void MenuView::Create(lv_obj_t* root)
 	);
 
 
-	// /* Item IMU */
-	// Item_Create(
-	// 	&ui.imu,
-	// 	root,
-	// 	"IMU",
-	// 	"gyroscope",
-
-	// 	"Ax\n"
-	// 	"Ay\n"
-	// 	"Az\n"
-	// 	"Gx\n"
-	// 	"Gy\n"
-	// 	"Gz\n"
-	// 	"Mx\n"
-	// 	"My\n"
-	// 	"Mz"
-	// );
 
 	// /* Item Battery */
 	// Item_Create(
@@ -122,8 +115,8 @@ void MenuView::Group_Init()
 
 	lv_group_add_obj(ui.group, ui.dialpad.icon);
 	lv_group_add_obj(ui.group, ui.switches.icon);
+	lv_group_add_obj(ui.group, ui.hass.icon);
 	lv_group_add_obj(ui.group, ui.system.icon);
-	// lv_group_add_obj(ui.group, ui.imu.icon);
 	// lv_group_add_obj(ui.group, ui.battery.icon);
 	// lv_group_add_obj(ui.group, ui.storage.icon);
 
@@ -250,7 +243,7 @@ void MenuView::Item_Create(
 
 	/* datas */
 	label = lv_label_create(cont);
-	lv_label_set_text(label, "-");
+	lv_label_set_text(label, "");
 	lv_obj_add_style(label, &style.data, 0);
 	lv_obj_align(label, LV_ALIGN_CENTER, 60, 0);
 	item->labelData = label;
@@ -264,69 +257,6 @@ void MenuView::Item_Create(
 	lv_obj_set_height(cont, height);
 	lv_obj_set_height(icon, height);
 }
-
-void Page::MenuView::SetJoints(const char* info)
-{
-	lv_label_set_text_fmt(
-		ui.dialpad.labelData,
-		"%s",
-		info
-	);
-}
-
-void Page::MenuView::SetPose6D(const char* info)
-{
-	lv_label_set_text_fmt(
-		ui.switches.labelData,
-		"%s",
-		info
-	);
-}
-
-// void MenuView::SetIMU(
-// 	const char* info
-// )
-// {
-// 	lv_label_set_text_fmt(
-// 		ui.imu.labelData,
-// 		"%s",
-// 		info
-// 	);
-// }
-
-// void MenuView::SetBattery(
-// 	int usage,
-// 	float voltage,
-// 	const char* state
-// )
-// {
-// 	lv_label_set_text_fmt(
-// 		ui.battery.labelData,
-// 		"%d%%\n"
-// 		"%0.2fV\n"
-// 		"%s",
-// 		usage,
-// 		voltage,
-// 		state
-// 	);
-// }
-
-// void MenuView::SetStorage(
-// 	const char* detect,
-// 	const char* size,
-// 	const char* version
-// )
-// {
-// 	lv_label_set_text_fmt(
-// 		ui.storage.labelData,
-// 		"%s\n"
-// 		"%s\n"
-// 		"%s",
-// 		detect,
-// 		size,
-// 		version
-// 	);
-// }
 
 void MenuView::SetSystem(
 	const char* firmVer,
