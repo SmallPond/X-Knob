@@ -162,12 +162,11 @@ void Playground::onEvent(lv_event_t* event)
 				instance->Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 				instance->Manager->Pop();
 			}
-		}	
-	} else if (code == LV_EVENT_SHORT_CLICKED) {
+		}
 		if (app == APP_MODE_SUPER_DIAL) {
 			Serial.printf("Playground: press\n");
 			HAL::surface_dial_press();
-		}
+		}	
 	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
 		Serial.printf("Playground: LV_EVENT_LONG_PRESSED_REPEAT\n");

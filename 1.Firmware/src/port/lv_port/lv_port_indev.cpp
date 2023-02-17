@@ -41,6 +41,8 @@ void lv_port_indev_init(void)
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_ENCODER;
     indev_drv.read_cb = encoder_read;
+    indev_drv.long_press_time = 2000;           // 按下 2s 为长按
+    indev_drv.long_press_repeat_time = 500;    // 间隔 0.5s 发送LV_EVENT_LONG_PRESSED_REPEAT 事件
     encoder_indev = lv_indev_drv_register(&indev_drv);
 
     /* Later you should create group(s) with `lv_group_t * group = lv_group_create()`,

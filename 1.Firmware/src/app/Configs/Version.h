@@ -25,7 +25,7 @@
 
 /* Firmware Version */
 #define VERSION_FIRMWARE_NAME   "x-knob"
-#define VERSION_SOFTWARE        "v1.0"
+#define VERSION_SOFTWARE        "v1.1"
 #define VERSION_HARDWARE        "v1.1"
 #define VERSION_AUTHOR_NAME     "dingmos"
 
