@@ -32,6 +32,9 @@ namespace HAL
     void surface_dial_release(void);
     void surface_dial_press(void);
     bool surface_dial_is_connected(void);
+
+    void power_init(void);
+    void power_off(void);
 }
 
 

@@ -13,7 +13,7 @@ void HAL::Init()
     disp_draw_buf = static_cast<lv_color_t*>(malloc(DISP_BUF_SIZE * sizeof(lv_color_t)));
     if (disp_draw_buf == nullptr)
         Serial.printf("lv_port_disp_init malloc failed!\n");
-    
+    power_init();
     motor_init();
 
     knob_init();
