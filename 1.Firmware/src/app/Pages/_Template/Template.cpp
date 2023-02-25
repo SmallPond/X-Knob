@@ -43,7 +43,7 @@ void Template::onViewWillAppear()
 
 	lv_obj_set_style_bg_color(root, param.color, LV_PART_MAIN);
 
-	timer = lv_timer_create(onTimerUpdate, param.time, this);
+	// timer = lv_timer_create(onTimerUpdate, param.time, this);
 }
 
 void Template::onViewDidAppear()
@@ -58,7 +58,7 @@ void Template::onViewWillDisappear()
 
 void Template::onViewDidDisappear()
 {
-	lv_timer_del(timer);
+	// lv_timer_del(timer);
 }
 
 void Template::onViewDidUnload()
@@ -92,9 +92,6 @@ void Template::onEvent(lv_event_t* event)
 
 	if (code == LV_EVENT_PRESSED)
 	{
-		if (lv_obj_has_state(obj, LV_STATE_FOCUSED))
-		{
-			instance->Manager->Push("Pages/Menu");
-		}
+		instance->Manager->Push("Pages/Menu");
 	}
 }
