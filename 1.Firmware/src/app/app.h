@@ -23,6 +23,18 @@ do{                 \
 
 #endif
 
+#ifndef offsetof
+    #define offsetof(type, member) ((size_t)&reinterpret_cast<char const volatile&>        
+          ((((type*)0)->member)))
+#endif
+
+#ifndef container_of
+#define container_of(ptr, type, member) ({          								\
+     const typeof( ((type *)0)->member ) *__mptr = (ptr);    	\
+     (type *)( (char *)__mptr - offsetof(type,member) );})
+#endif
+
+
 void display_init();
 
 void App_Init();
@@ -39,6 +51,7 @@ enum PLAYGROUND_MODE {
 
 enum APP_MODE {
     APP_MODE_SUPER_DIAL = PLAYGROUND_MODE_MAX,
+    APP_MODE_HOME_ASSISTANT,
     APP_MODE_MAX,
 };
 

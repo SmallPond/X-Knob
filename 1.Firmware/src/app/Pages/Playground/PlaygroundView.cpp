@@ -91,11 +91,11 @@ void Page::PlaygroundView::UpdateView(PlaygroundInfo *info)
 
 void PlaygroundView::DefaultView(void)
 {
-	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 360, 360, 270);
-	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 41, 0, 0, lv_color_make(0xff, 0x00, 0x00));
-	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 2, 0, 20, lv_color_make(0xff, 0xff, 0xff), 10);
 
-	// lv_meter_set_scale_ticks(ui.meter, ui.scale_arc, 41, 0, 0, lv_color_make(0xff, 0x00, 0x00));
+	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 72, 360, 270);
+	// Set ticks to black so that they are not displayed
+	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_black());
+	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 0, 0, 20, lv_color_black(), 10);
 }
 
 void PlaygroundView::OnOffView(void)
@@ -222,7 +222,9 @@ void PlaygroundView::Create(lv_obj_t* root)
 
 void PlaygroundView::Delete()
 {
+	printf("Deleting Playground\n");
 	lv_group_del(ui.group);
 	lv_style_reset(&style.meter);
 	lv_style_reset(&style.ticks);
+	printf("Delete done playground\n");
 }
