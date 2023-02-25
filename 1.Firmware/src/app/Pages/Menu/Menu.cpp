@@ -25,6 +25,7 @@ void Menu::onViewLoad()
 	AttachEvent(root, onPlaygroundEvent);
 	AttachEvent(View.ui.dialpad.icon, onSuperDialEvent);
 	AttachEvent(View.ui.switches.icon, onPlaygroundEvent);
+	AttachEvent(View.ui.hass.icon, onHassEvent);
 	AttachEvent(View.ui.system.icon, onSystemEvent);
 	// AttachEvent(View.ui.imu.icon);
 	// AttachEvent(View.ui.battery.icon);
@@ -134,6 +135,23 @@ void Menu::onSuperDialEvent(lv_event_t* event)
 	{
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 		int16_t mode = APP_MODE_SUPER_DIAL;
+		Stash_t stash;
+		stash.ptr = &mode;
+		stash.size = sizeof(int16_t);
+		instance->Manager->Push("Pages/Playground", &stash);
+	}
+}
+
+void Menu::onHassEvent(lv_event_t* event)
+{
+	lv_obj_t* obj = lv_event_get_target(event);
+	lv_event_code_t code = lv_event_get_code(event);
+	auto* instance = (Menu*)lv_obj_get_user_data(obj);
+
+	if (code == LV_EVENT_PRESSED)
+	{
+		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
+		int16_t mode = APP_MODE_HOME_ASSISTANT;
 		Stash_t stash;
 		stash.ptr = &mode;
 		stash.size = sizeof(int16_t);

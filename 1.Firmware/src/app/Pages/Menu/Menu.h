@@ -30,7 +30,8 @@ private:
     static void onTimerUpdate(lv_timer_t* timer);
     static void onPlaygroundEvent(lv_event_t* event);
     static void onSuperDialEvent(lv_event_t* event);
-     static void onSystemEvent(lv_event_t* event);
+    static void onSystemEvent(lv_event_t* event);
+    static void onHassEvent(lv_event_t* event);
 private:
     MenuView View;
     MenuModel Model;
