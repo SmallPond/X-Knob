@@ -19,6 +19,14 @@ namespace Page
 class PlaygroundView
 {
 public:
+
+    int32_t MAX_VALUE = 100;
+    int32_t MIN_VALUE = 0;
+    int32_t SCALE_LEFT_BOUND_TICKS = 200;
+    int32_t SCALE_ANGLE_RANGE = 140;
+    int32_t SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
+    int32_t ARC_START_ROTATION = 120;
+
     virtual void Create(lv_obj_t* root);
     void Delete();
     virtual void UpdateView(PlaygroundInfo *info);
@@ -44,10 +52,12 @@ public:
         lv_style_t meter;
         lv_style_t ticks;
     } style;
-
-private:
+protected:
     void OnOffView(void);
     void BoundZeroView(void);
+    void DefaultView(void);
+private:
+
 };
 
 }

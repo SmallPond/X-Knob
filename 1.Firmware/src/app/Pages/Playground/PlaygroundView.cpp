@@ -3,12 +3,7 @@
 using namespace Page;
 
 
-static int32_t MAX_VALUE = 100;
-static int32_t MIN_VALUE = 0;
-static int32_t SCALE_LEFT_BOUND_TICKS = 200;
-static int32_t SCALE_ANGLE_RANGE = 140;
-static int32_t SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
-static int32_t ARC_START_ROTATION = 120;
+
 /*
  * 默认视图显示： 圆点，原点所在位置 label_value
  * 此函数根据需要增加或 hidden 对象
@@ -23,18 +18,9 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 			// This mode is default
 			break;
 		case PLAYGROUND_MODE_BOUND:
-		    MIN_VALUE = 0;
-			MAX_VALUE = 12;
-			SCALE_LEFT_BOUND_TICKS = 200;
-			SCALE_ANGLE_RANGE = 140;
-			SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
 			BoundZeroView();
 			break;
 		case PLAYGROUND_MODE_ON_OFF:
-			MIN_VALUE = 0;
-			MAX_VALUE = 1;
-			SCALE_LEFT_BOUND_TICKS = 240;
-			SCALE_ANGLE_RANGE = 60;
 			OnOffView();
 			break;
 		default:
@@ -43,7 +29,7 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 
 }
 
-inline void PlaygroundView::UpdateBackgroundView(PlaygroundInfo *info) 
+void PlaygroundView::UpdateBackgroundView(PlaygroundInfo *info) 
 {
 	// lv_style_set_bg_main_stop(&style.meter, 255-xkonb_value);
 	// lv_style_set_bg_grad_stop(&style.meter, 255-xkonb_value);
@@ -103,9 +89,21 @@ void Page::PlaygroundView::UpdateView(PlaygroundInfo *info)
 	);
 }
 
+void PlaygroundView::DefaultView(void)
+{
+	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 360, 360, 270);
+	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 41, 0, 0, lv_color_make(0xff, 0x00, 0x00));
+	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 2, 0, 20, lv_color_make(0xff, 0xff, 0xff), 10);
+
+	// lv_meter_set_scale_ticks(ui.meter, ui.scale_arc, 41, 0, 0, lv_color_make(0xff, 0x00, 0x00));
+}
 
 void PlaygroundView::OnOffView(void)
 {
+	MIN_VALUE = 0;
+	MAX_VALUE = 1;
+	SCALE_LEFT_BOUND_TICKS = 240;
+	SCALE_ANGLE_RANGE = 60;
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 3, 2, 0, lv_color_make(0xff, 0xff, 0xff));
 	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 2, 4, 20, lv_color_make(0xff, 0xff, 0xff), 10);
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 1, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
@@ -113,6 +111,11 @@ void PlaygroundView::OnOffView(void)
 
 void PlaygroundView::BoundZeroView(void)
 {
+	MIN_VALUE = 0;
+	MAX_VALUE = 12;
+	SCALE_LEFT_BOUND_TICKS = 200;
+	SCALE_ANGLE_RANGE = 140;
+	SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 13, 2, 0, lv_color_make(0xff, 0xff, 0xff));
 	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 12, 4, 20, lv_color_make(0xff, 0xff, 0xff), 10);
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 12, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
@@ -134,13 +137,6 @@ void PlaygroundView::Create(lv_obj_t* root)
 	lv_obj_set_style_bg_color(root, lv_color_black(), 0);
 	lv_obj_set_style_bg_opa(root, LV_OPA_COVER, 0);
 	
-	//Write style state: LV_STATE_DEFAULT for style_screen_main_main_default
-	// static lv_style_t style_screen_main_main_default;
-	// lv_style_init(&style_screen_main_main_default);
-	// lv_style_set_bg_color(&style_screen_main_main_default, lv_color_make(0xff, 0xff, 0xff));
-	// lv_style_set_bg_opa(&style_screen_main_main_default, 0);
-	// lv_obj_add_style(root, &style_screen_main_main_default, LV_PART_MAIN|LV_STATE_DEFAULT);
-
 	//Write codes meter
 	ui.meter = lv_meter_create(root);
 	lv_obj_set_pos(ui.meter, 1, 0);

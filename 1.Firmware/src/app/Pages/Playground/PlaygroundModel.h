@@ -12,7 +12,6 @@ public:
     int16_t app;
     void Init();
     void Deinit();
-    void Update(void* pg_ui);
     virtual void GetKnobStatus(PlaygroundInfo *info);
     void ChangeMotorMode(int mode);
     void SetPlaygroundMode(int16_t mode);
