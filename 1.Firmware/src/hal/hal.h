@@ -35,6 +35,10 @@ namespace HAL
 
     void power_init(void);
     void power_off(void);
+
+    bool is_encoder_enabled(void);
+    void encoder_disable(void);
+    void encoder_enable(void);
 }
 
 
