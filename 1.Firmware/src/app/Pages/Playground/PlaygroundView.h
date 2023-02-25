@@ -28,6 +28,7 @@ public:
     int32_t ARC_START_ROTATION = 120;
 
     virtual void Create(lv_obj_t* root);
+    // maybe we should use virtual
     void Delete();
     virtual void UpdateView(PlaygroundInfo *info);
     virtual void SetPlaygroundMode(int16_t mode);

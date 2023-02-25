@@ -21,7 +21,7 @@ public:
 
     void onEvent(Account* account, Account::EventParam_t* param);
 private:
-    Account* account;
+
 };
 
 }

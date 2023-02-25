@@ -30,9 +30,5 @@ void SurfaceDialModel::Init()
 
 void SurfaceDialModel::Deinit()
 {
-    if (account)
-    {
-        delete account;
-        account = nullptr;
-    }
+
 }

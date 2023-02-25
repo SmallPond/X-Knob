@@ -41,3 +41,10 @@ void SurfaceDialView::Create(lv_obj_t* root)
     lv_img_set_src(m_ui.img_super_dial, Resource.GetImage("dialpad"));
 	lv_obj_align(m_ui.img_super_dial, LV_ALIGN_CENTER, 0, 0);
 }
+
+void SurfaceDialView::Delete()
+{
+	
+	PlaygroundView:Delete();
+	
+}
