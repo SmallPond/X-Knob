@@ -26,4 +26,7 @@
 #define LVGL_RUNNING_CORE   0            
 #define ESP32_RUNNING_CORE  1            
 
+ // The owner of the X-Knob
+#define MQTT_HOST               "dingmos"        
+
 #endif 
