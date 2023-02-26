@@ -17,7 +17,7 @@ void TaskLvglUpdate(void* parameter)
 void display_init(void)
 {
     Arduino_DataBus *bus = new Arduino_HWSPI(TFT_DC, TFT_CS, SCLK, MOSI, MISO);
-    static SCREEN_CLASS screen(bus, TFT_RST, 0 /* 屏幕方向 */, true /* IPS */);
+    static SCREEN_CLASS screen(bus, TFT_RST, 2 /* 屏幕方向 0: 0, 1: 90, 2: 180*/, true /* IPS */);
     // Init Display
     screen.begin();
     screen.fillScreen(BLACK);
