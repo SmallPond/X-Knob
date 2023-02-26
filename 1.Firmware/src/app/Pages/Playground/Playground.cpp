@@ -27,7 +27,7 @@ app_mode_config_t app_config[] = {
 		.motor_mode = MOTOR_SUPER_DIAL,
 	},
 	[APP_MODE_HOME_ASSISTANT] = {
-		.motor_mode = MOTOR_COARSE_DETENTS,
+		.motor_mode = MOTOR_UNBOUND_COARSE_DETENTS,
 	},
 };
 
@@ -143,9 +143,19 @@ void Playground::Update()
 {
 	PlaygroundInfo info;
 	Model->GetKnobStatus(&info);
-	if (app == APP_MODE_SUPER_DIAL && info.konb_direction != SUPER_DIAL_NULL) {
-		HAL::surface_dial_update(info.konb_direction);
+	if (info.konb_direction != SUPER_DIAL_NULL) {
+		switch(app) {
+			case APP_MODE_SUPER_DIAL:
+				HAL::surface_dial_update(info.konb_direction);
+				break;
+			case APP_MODE_HOME_ASSISTANT:
+				// char *name = ((HassView*)View)->GetEditedDeviceName();
+				// HAL::mqtt_dial_update(name, info.konb_direction);
+				break;
+		}
 	}
+
+
 
 	View->UpdateView(&info);
 }
@@ -229,13 +239,16 @@ void Playground::HassEventHandler(lv_event_t* event, lv_event_code_t code)
         lv_obj_add_state(obj, LV_STATE_EDITED);
 		((HassView*)View)->SetCtrView(obj);
 		HAL::encoder_disable();
-        
+		if (((HassView*)View)->GetViewMode() == VIEW_MODE_ON_OFF) {
+			Model->ChangeMotorMode(MOTOR_ON_OFF_STRONG_DETENTS);
+		}
 	} else if (code == LV_EVENT_LONG_PRESSED) {
 		Serial.printf("Hass: LV_EVENT_LONG_PRESSED\n");
 		if (lv_obj_has_state(obj, LV_STATE_EDITED)) {
 			((HassView*)View)->ClearCtrView(obj);
 			lv_obj_clear_state(obj, LV_STATE_EDITED);
 			HAL::encoder_enable();
+			Model->ChangeMotorMode(app_config[app].motor_mode);
 		} 
 	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
@@ -245,6 +258,7 @@ void Playground::HassEventHandler(lv_event_t* event, lv_event_code_t code)
 			Manager->Pop();
 		}
 	} 
+
 }
 
 void Playground::onEvent(lv_event_t* event)
