@@ -15,7 +15,7 @@ Super Dial 电机旋钮屏替换了原 smart_knob 的“昂贵电机”且采用
 ### Demo video
 
 [演示视频](https://www.bilibili.com/video/BV1N3411Z764/)
-
+[智能家居控制演示视频](https://www.bilibili.com/video/BV1dg4y1H7vv/)
 
 <a href="https://www.bilibili.com/video/BV1N3411Z764/">
     <img src="https://www.dingmos.com/usr/uploads/2023/01/661252453.png" width="480" />
@@ -41,12 +41,37 @@ X-KNOB 支持的特性：
 - [x] 实现基于 LVGL 框架下 smart-knob 的 UI 
 - [x] Surface Dial 
 - [x] 按键按压振动反馈 
-
+- [x] 电源管理
+  - 电池管理、系统深度休眠；
+  - V2（最新） 硬件支持 UPS
+- [x] X-Knob 通过 MQTT接入 Home Assistant，可实现控制接入 HASS 的设备
+ 
 待支持的特性：
-- [ ] 电源管理：电池管理、系统深度休眠
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
-# 实现记录
 
+# Get Started
+
+基本环境：
+- VScode + PlatformIO
+- [arduino-esp32](https://github.com/espressif/arduino-esp32) v2.0.5
+
+1. 基本配置
+```
+git clone https://github.com/SmallPond/X-Knob.git
+
+# 使用 PlatformIO 打开 Firmware 工程
+# 重命名 src/secrets.h.example 文件为 src/secrets.h
+# 并且修改相关配置：WiFi 密码，MQTT Server 等
+cp src/secrets.h.example src/secrets.h
+
+# （Option）修改 config.h 文件的 MQTT_HOST 为你的名字
+# 该宏用来附带在 MQTT Topic 中
+#define MQTT_HOST               "dingmos"      
+```
+2. 编译 && flash && enjoy 
+
+
+# 实现记录
 ## LVGL
 
 基于已有框架增添自己的图片：

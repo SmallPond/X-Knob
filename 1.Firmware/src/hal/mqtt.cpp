@@ -37,8 +37,11 @@ void connectMQTT() {
         setup_wifi();
     }
     Serial.println("Attempting MQTT connection...");
-    // mqtt_client.connect(MQTT_USER, MQTT_USER, MQTT_PASSWORD)
+#ifdef MQTT_PASSWORD 
+    if (mqtt_client.connect(MQTT_USER, MQTT_USER, MQTT_PASSWORD)) {
+#else 
     if (mqtt_client.connect(MQTT_USER)) {
+#endif 
         Serial.printf("MQTT connected");
     } else {
         Serial.printf("MQTT failed rc=%d will try again in 5 seconds", mqtt_client.state());
