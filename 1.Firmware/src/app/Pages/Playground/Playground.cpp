@@ -4,6 +4,7 @@
 #include "SurfaceDialModel.h"
 #include "../HASS/HassModel.h"
 #include "../HASS/HassView.h"
+#include "../HASS/HassHalComm.h"
 using namespace Page;
 
 typedef struct {
@@ -68,6 +69,7 @@ void Playground::onViewLoad()
 		case APP_MODE_HOME_ASSISTANT:
 			Model = (SurfaceDialModel*) new HassModel(); 
 			View = (PlaygroundView*) new HassView();
+			hass_hal_init();
 			break;
 		default:
 			break;
@@ -149,13 +151,13 @@ void Playground::Update()
 				HAL::surface_dial_update(info.konb_direction);
 				break;
 			case APP_MODE_HOME_ASSISTANT:
-				// char *name = ((HassView*)View)->GetEditedDeviceName();
-				// HAL::mqtt_dial_update(name, info.konb_direction);
+				char *name = ((HassView*)View)->GetEditedDeviceName();
+				if(name != NULL) {
+					hass_hal_send(name, info.konb_direction);
+				}
 				break;
 		}
 	}
-
-
 
 	View->UpdateView(&info);
 }
@@ -233,14 +235,18 @@ void Playground::HassEventHandler(lv_event_t* event, lv_event_code_t code)
     }
 	if (code == LV_EVENT_PRESSED)
 	{
-		if (label != NULL) {
-			printf("Control device: %s\n", lv_label_get_text(label));
-		}
-        lv_obj_add_state(obj, LV_STATE_EDITED);
-		((HassView*)View)->SetCtrView(obj);
-		HAL::encoder_disable();
-		if (((HassView*)View)->GetViewMode() == VIEW_MODE_ON_OFF) {
-			Model->ChangeMotorMode(MOTOR_ON_OFF_STRONG_DETENTS);
+		if (!lv_obj_has_state(obj, LV_STATE_EDITED)) {
+			if (label != NULL) {
+				printf("Control device: %s\n", lv_label_get_text(label));
+			}
+			lv_obj_add_state(obj, LV_STATE_EDITED);
+			((HassView*)View)->SetCtrView(obj);
+			HAL::encoder_disable();
+			if (((HassView*)View)->GetViewMode() == VIEW_MODE_ON_OFF) {
+				Model->ChangeMotorMode(MOTOR_ON_OFF_STRONG_DETENTS);
+			}
+		} else {
+			hass_hal_send(lv_label_get_text(label), HASS_PUSH);
 		}
 	} else if (code == LV_EVENT_LONG_PRESSED) {
 		Serial.printf("Hass: LV_EVENT_LONG_PRESSED\n");

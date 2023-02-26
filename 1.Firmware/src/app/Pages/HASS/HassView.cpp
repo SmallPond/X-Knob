@@ -24,7 +24,6 @@ void HassView::UpdateFocusedDevice(const char* name)
 void HassView::SetCtrView(lv_obj_t *obj)
 {
 	device_t *device = device_map[obj];
-	printf("on_off: %d, is_set_value: %d\n",device->is_on_off, device->is_set_value);
 
 	if (device->is_set_value) {
 		/*
@@ -35,6 +34,7 @@ void HassView::SetCtrView(lv_obj_t *obj)
 		PlaygroundView::OnOffView();
 		current_view = VIEW_MODE_ON_OFF;
 	}
+	printf("set view: %d\n",current_view);
 	lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
 }
 /*
@@ -81,10 +81,6 @@ void HassView::UpdateCtrlView(PlaygroundInfo *info)
 {
 	int _value = 0;
 	int32_t motor_pos = info->motor_pos;
-	motor_pos = motor_pos % 360;
-	if (motor_pos < 0) {
-		motor_pos = 360 + motor_pos;
-	}
 	lv_meter_set_indicator_value(ui.meter, ui.nd_img_circle, motor_pos);
 
 	switch (current_view) {
@@ -98,8 +94,8 @@ void HassView::UpdateCtrlView(PlaygroundInfo *info)
 
 	lv_label_set_text_fmt(
 		ui.lable_value,
-		"%d",
-		_value
+		"%s",
+		_value?"ON":"OFF"
 	);
 }
 void HassView::UpdateView(PlaygroundInfo *info)
