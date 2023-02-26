@@ -96,6 +96,9 @@ void PlaygroundView::DefaultView(void)
 	// Set ticks to black so that they are not displayed
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_black());
 	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 0, 0, 20, lv_color_black(), 10);
+	// clear background color
+	lv_obj_set_style_bg_main_stop(ui.meter, 255, 0);
+	lv_obj_set_style_bg_grad_stop(ui.meter, 255, 0);
 }
 
 void PlaygroundView::OnOffView(void)

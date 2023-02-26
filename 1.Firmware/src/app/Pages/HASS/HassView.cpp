@@ -2,10 +2,8 @@
 #include "app/app.h"
 
 using namespace Page;
-#define ITEM_PAD 42
-enum VIEW_MODE {
-    VIEW_MODE_ON_OFF = 1,
-};
+#define ITEM_PAD 60
+
 /*
  * 默认视图显示： 圆点，原点所在位置 label_value
  * 此函数根据需要增加或 hidden 对象
@@ -39,6 +37,24 @@ void HassView::SetCtrView(lv_obj_t *obj)
 	}
 	lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
 }
+/*
+ * Gets the name of the controlled device
+*/
+char* HassView::GetEditedDeviceName(void)
+{
+	std::map<lv_obj_t*, device_t *>::iterator iter;
+    iter = device_map.begin();
+    while(iter != device_map.end()) {
+        if (lv_obj_has_state(iter->first, LV_STATE_EDITED)) {
+			lv_obj_t* label = lv_obj_get_child(iter->first, 1);
+			if (label != NULL) {
+				return lv_label_get_text(label);
+			}
+		}
+		iter++;
+    }
+	return NULL;
+}
 
 void HassView::ClearCtrView(lv_obj_t *obj)
 {
@@ -57,7 +73,10 @@ void HassView::ClearCtrView(lv_obj_t *obj)
 
 	lv_obj_set_style_bg_opa(obj, LV_OPA_TRANSP, 0);
 }
-
+int HassView::GetViewMode(void)
+{
+	return current_view;
+}
 void HassView::UpdateCtrlView(PlaygroundInfo *info) 
 {
 	int _value = 0;
@@ -161,12 +180,12 @@ void Page::HassView::group_init(void)
 	lv_group_set_focus_cb(m_ui.group, on_focus);
 	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), m_ui.group);
 
-	lv_group_add_obj(m_ui.group, m_ui.fan.cont);
 	lv_group_add_obj(m_ui.group, m_ui.monitor_light.cont);
+	lv_group_add_obj(m_ui.group, m_ui.fan.cont);
     lv_group_add_obj(m_ui.group, m_ui.air_conditioning.cont);
     lv_group_add_obj(m_ui.group, m_ui.wash_machine.cont);
 
-	lv_group_focus_obj(m_ui.fan.cont);
+	lv_group_focus_obj(m_ui.monitor_light.cont);
 }
 
 
@@ -212,7 +231,7 @@ void Page::HassView::style_init(void)
 	lv_style_set_transition(&style.cont, &trans);
 
 	lv_style_init(&style.label_name);
-	lv_style_set_text_font(&style.label_name, Resource.GetFont("bahnschrift_17"));
+	lv_style_set_text_font(&style.label_name, Resource.GetFont("bahnschrift_22"));
 	lv_style_set_text_color(&style.label_name, lv_color_white());
 }
 void HassView::Create(lv_obj_t* root)
@@ -221,7 +240,7 @@ void HassView::Create(lv_obj_t* root)
 
 	lv_obj_t * cont_row = lv_obj_create(root);
     lv_obj_remove_style_all(cont_row);
-    lv_obj_set_size(cont_row, 130, 120);
+    lv_obj_set_size(cont_row, ITEM_PAD * 3, 120);
     lv_obj_align(cont_row, LV_ALIGN_CENTER, 0, 5);
     lv_obj_set_flex_flow(cont_row, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(
@@ -236,15 +255,6 @@ void HassView::Create(lv_obj_t* root)
     // lv_obj_remove_style(obj, style, LV_PART_SCROLLBAR)
 
     style_init();
-    
-    device_item_create(
-      &(m_ui.fan),
-      cont_row,
-      "Fan",
-      "home_fan",
-	  true,
-	  false
-    );
 
     device_item_create(
       &(m_ui.monitor_light),
@@ -253,6 +263,15 @@ void HassView::Create(lv_obj_t* root)
       "home_bulb",
 	  true,
 	  true
+    );
+
+	device_item_create(
+      &(m_ui.fan),
+      cont_row,
+      "Fan",
+      "home_fan",
+	  true,
+	  false
     );
 
     device_item_create(
@@ -276,7 +295,7 @@ void HassView::Create(lv_obj_t* root)
     m_ui.foucs_label = lv_label_create(root);
 	lv_obj_add_style(m_ui.foucs_label, &style.label_name, 0);
     lv_label_set_text_fmt(m_ui.foucs_label, "%s", "NONE");
-    lv_obj_align(m_ui.foucs_label, LV_ALIGN_CENTER, 0, 60);
+    lv_obj_align(m_ui.foucs_label, LV_ALIGN_CENTER, 0, ITEM_PAD+10);
 	
     // lv_obj_set_size(m_ui.foucs_label, 42, 20);
     // lv_obj_center(m_ui.foucs_label);
@@ -292,7 +311,7 @@ void HassView::Delete()
 	lv_style_reset(&style.focus);
 	lv_style_reset(&style.edit);
 	lv_style_reset(&style.label_name);
-	
+
 	PlaygroundView:Delete();
 	
 }

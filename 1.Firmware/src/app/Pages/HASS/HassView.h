@@ -6,6 +6,10 @@
 #include "../Playground/PlaygroundView.h"
 #include <map>
 
+enum HASS_VIEW_MODE {
+    VIEW_MODE_ON_OFF = 1,
+};
+
 typedef struct
 {
     lv_obj_t* cont;   // include icon and label
@@ -29,6 +33,8 @@ public:
     void SetCtrView(lv_obj_t *obj);
     void ClearCtrView(lv_obj_t *obj);
     void UpdateCtrlView(PlaygroundInfo *info);
+    char* GetEditedDeviceName(void);
+    int GetViewMode(void);
     struct
     {
         device_t fan;
