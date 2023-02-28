@@ -1,7 +1,7 @@
 #ifndef __RESOURCE_POOL
 #define __RESOURCE_POOL
 
-#include "App/Utils/PageManager/ResourceManager.h"
+#include "app/Utils/PageManager/ResourceManager.h"
 #include "lvgl.h"
 
 class ResourcePool

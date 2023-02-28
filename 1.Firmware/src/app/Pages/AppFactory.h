@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "App/Utils/PageManager/PageManager.h"
+#include "app/Utils/PageManager/PageManager.h"
 
 class AppFactory : public PageFactory
 {

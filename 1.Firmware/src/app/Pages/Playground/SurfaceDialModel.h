@@ -1,6 +1,6 @@
 #ifndef __SURFACE_DIAL_MODEL_H
 #define __SURFACE_DIAL_MODEL_H
-#include "App/Utils/AccountSystem/Account.h"
+#include "app/Utils/AccountSystem/Account.h"
 #include "lvgl.h"
 #include "PlaygroundView.h"
 #include "PlaygroundModel.h"

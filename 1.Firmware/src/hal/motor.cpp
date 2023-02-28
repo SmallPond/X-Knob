@@ -1,7 +1,7 @@
 #include "hal/hal.h"
 #include "motor.h"
 #include <SimpleFOC.h>
-#include "App/Accounts/Account_Master.h"
+#include "app/Accounts/Account_Master.h"
 
 static const int spiClk = 1000000; // 400KHz
 SPIClass* hspi = NULL;

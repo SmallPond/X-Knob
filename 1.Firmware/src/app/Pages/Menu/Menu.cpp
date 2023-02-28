@@ -1,5 +1,5 @@
 #include "Menu.h"
-#include "App/Configs/Version.h"
+#include "app/Configs/Version.h"
 #include "hal/motor.h"
 #include "app/app.h"
 using namespace Page;

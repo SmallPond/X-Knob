@@ -1,7 +1,7 @@
 #ifndef __SYSTEM_INFOS_MODEL_H
 #define __SYSTEM_INFOS_MODEL_H
 
-#include "App/Accounts/Account_Master.h"
+#include "app/Accounts/Account_Master.h"
 
 namespace Page
 {

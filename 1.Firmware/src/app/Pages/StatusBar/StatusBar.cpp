@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 #include "StatusBar.h"
-#include "App/Accounts/Account_Master.h"
+#include "app/Accounts/Account_Master.h"
 #include "HAL/HAL.h"
 
 #define BATT_USAGE_HEIGHT (lv_obj_get_style_height(ui.battery.img, 0) - 6)

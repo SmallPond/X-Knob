@@ -1,6 +1,6 @@
 #ifndef __HOME_ASSISTANT_MODEL_H
 #define __HOME_ASSISTANTL_MODEL_H
-#include "App/Utils/AccountSystem/Account.h"
+#include "app/Utils/AccountSystem/Account.h"
 #include "lvgl.h"
 #include "../Playground/PlaygroundView.h"
 #include "../Playground/PlaygroundModel.h"
