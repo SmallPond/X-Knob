@@ -131,4 +131,4 @@ UI 设计工具：
 - [Super knob](https://gitee.com/wenzhengclub/super_knob)
 - [X-TRACK](https://github.com/FASTSHIFT/X-TRACK)
 - [Peak](https://github.com/peng-zhihui/Peak)
-- [hass-xiaomi-miot](https://github.com/al-one/hass-xiaomi-miot)
+- [xiaomi_miot_raw](https://github.com/ha0y/xiaomi_miot_raw)
