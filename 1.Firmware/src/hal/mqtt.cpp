@@ -1,10 +1,14 @@
+
+#include "hal/hal.h"
+
 #if XK_MQTT
+
 #include <Arduino.h>
 #include "secrets.h"
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "config.h"
-#include "hal/hal.h"
+
 
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
@@ -99,5 +103,17 @@ void HAL::mqtt_init(void) {
         2,
         &handleTaskMqtt,
         ESP32_RUNNING_CORE);
+}
+#else 
+void HAL::mqtt_init(void) {
+
+}
+
+int HAL::mqtt_publish(const char *topic, const char *playload) {
+    return 0;
+}
+
+int HAL::mqtt_subscribe(const char *topic){
+
 }
 #endif
