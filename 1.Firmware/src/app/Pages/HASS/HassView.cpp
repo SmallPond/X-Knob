@@ -166,7 +166,7 @@ void on_focus(lv_group_t* g)
 	lv_obj_t* cont_row = lv_obj_get_parent(cont);
 	lv_coord_t x = lv_obj_get_x(cont);
     lv_coord_t width = lv_obj_get_width(cont);
-    printf("device x: %d, width: %d\n", x, width);
+    // printf("device x: %d, width: %d\n", x, width);
 	lv_obj_scroll_to_x(cont_row, x, LV_ANIM_ON);
 }
 
@@ -208,23 +208,23 @@ void Page::HassView::style_init(void)
     lv_style_set_bg_color(&style.edit, lv_color_hex(0x870AEA));
 
 
-    static const lv_style_prop_t style_prop[] =
-	{
-		LV_STYLE_WIDTH,
-		LV_STYLE_PROP_INV
-	};
+    // static const lv_style_prop_t style_prop[] =
+	// {
+	// 	LV_STYLE_WIDTH,
+	// 	LV_STYLE_PROP_INV
+	// };
 
-	static lv_style_transition_dsc_t trans;
-	lv_style_transition_dsc_init(
-		&trans,
-		style_prop,
-		lv_anim_path_overshoot,
-		200,
-		0,
-		NULL
-	);
-	lv_style_set_transition(&style.focus, &trans);
-	lv_style_set_transition(&style.cont, &trans);
+	// static lv_style_transition_dsc_t trans;
+	// lv_style_transition_dsc_init(
+	// 	&trans,
+	// 	style_prop,
+	// 	lv_anim_path_overshoot,
+	// 	500,
+	// 	0,
+	// 	NULL
+	// );
+	// lv_style_set_transition(&style.focus, &trans);
+	// lv_style_set_transition(&style.cont, &trans);
 
 	lv_style_init(&style.label_name);
 	lv_style_set_text_font(&style.label_name, Resource.GetFont("bahnschrift_22"));
