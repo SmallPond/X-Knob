@@ -1,4 +1,25 @@
-# X-KNOB
+
+<h1 align="center">X-Knob: A Smart Knob Based on LVGL UI Framework</h1>
+<div align="center">
+
+
+<a href="https://github.com/SmallPond/X-Knob/stargazers"><img src="https://img.shields.io/github/stars/SmallPond/X-Knob" alt="Stars Badge"/></a>
+<a href="https://github.com/SmallPond/X-Knob/network/members"><img src="https://img.shields.io/github/forks/SmallPond/X-Knob" alt="Forks Badge"/></a>
+<a href="https://github.com/SmallPond/X-Knob/pulls"><img src="https://img.shields.io/github/issues-pr/SmallPond/X-Knob" alt="Pull Requests Badge"/></a>
+<a href="https://github.com/SmallPond/X-Knob/issues"><img src="https://img.shields.io/github/issues/SmallPond/X-Knob" alt="Issues Badge"/></a>
+<a href="https://github.com/SmallPond/X-Knob/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/SmallPond/X-Knob?color=2b9348"></a>
+<a href="https://github.com/SmallPond/X-Knob/blob/master/LICENSE"><img src="https://img.shields.io/github/license/SmallPond/X-Knob?color=2b9348" alt="License Badge"/></a>
+
+
+  
+<!-- <img src="http://hits.dwyl.com/peng-zhihui/ElectronBot.svg" alt="Hits Badge"/> -->
+
+<i>喜欢这个项目吗？请考虑给 Star ⭐️ 以帮助改进！</i>
+
+
+</div>
+
+---
 
 [中文文档](README.md) ｜ [English](README_EN.md)
 
@@ -73,6 +94,9 @@ cp src/secrets.h.example src/secrets.h
 ```
 2. 编译 && flash && enjoy 
 
+关于固件下载的**注意事项** ：
+- ESP32-S3 支持 USB 下载，可以在不拆开 X-knob 的情况下直接升级固件，参考[#5](https://github.com/SmallPond/X-Knob/issues/5) 
+- 直接使用 Release 中的固件，flash 是需要偏移地址 `0x10000`，主要原因是 pio 编译出来的固件只包含 app 部分，而不含 bootloader 等部分。
 
 # 实现记录
 ## LVGL
