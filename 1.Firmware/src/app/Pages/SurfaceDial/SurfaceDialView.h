@@ -1,10 +1,10 @@
 #ifndef __SUPER_DIAL_VIEW_H
 #define __SUPER_DIAL_VIEW_H
-#include "Arduino.h"
+#include <Arduino.h>
 #include "app/app.h"
-#include "../Page.h"
-#include "PlaygroundView.h"
-
+#include "app/Pages/Page.h"
+#include "../Playground/PlaygroundView.h"
+#include "SurfaceDialModel.h"
 
 namespace Page
 {
@@ -15,7 +15,7 @@ public:
     SurfaceDialView(){}
     void Create(lv_obj_t* root);
     void Delete();
-    void UpdateView(PlaygroundInfo *info);
+    void UpdateView(SurfaceDialInfo *info);
     void SetPlaygroundMode(int16_t mode);
 
 

@@ -1,9 +1,8 @@
 #include "PlaygroundModel.h"
 #include "app/Accounts/Account_Master.h"
-#include <Arduino.h>
 #include "hal/motor.h"
 #include "hal/hal.h"
-
+#include "Playground.h"
 using namespace Page;
 
 int32_t MAX_VALUE = 100;
@@ -54,7 +53,7 @@ void PlaygroundModel::SetPlaygroundMode(int16_t mode)
 void PlaygroundModel::ChangeMotorMode(int mode)
 {
     knob_value = 0;
-    Serial.printf("MenuModel: Change Motor Mode [%d]\n", mode);
+    printf("MenuModel: Change Motor Mode [%d]\n", mode);
     AccountSystem::Motor_Info_t info;
     info.cmd = AccountSystem::MOTOR_CMD_CHANGE_MODE;
     info.motor_mode = mode;

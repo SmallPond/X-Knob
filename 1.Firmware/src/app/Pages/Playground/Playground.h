@@ -29,8 +29,6 @@ public:
     virtual void onViewDidDisappear();
     virtual void onViewDidUnload();
     void PlayEventHandler(lv_event_t* event, lv_event_code_t code);
-    void SurfaceDialEventHandler(lv_event_t* event, lv_event_code_t code);
-    void HassEventHandler(lv_event_t* event, lv_event_code_t code);
 
 private:
     void Update();

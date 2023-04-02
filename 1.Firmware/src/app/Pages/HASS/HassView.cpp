@@ -1,27 +1,27 @@
 #include "HassView.h"
-#include "app/app.h"
+#include "Hass.h"
+#include "HassModel.h"
 
 using namespace Page;
 #define ITEM_PAD 60
-
 /*
  * 默认视图显示： 圆点，原点所在位置 label_value
  * 此函数根据需要增加或 hidden 对象
 */
-void Page::HassView::SetPlaygroundMode(int16_t mode)
+void HassView::SetPlaygroundMode(int16_t mode)
 {
 	lv_obj_add_flag(ui.lable_value, LV_OBJ_FLAG_HIDDEN);
 	// lv_label_set_text(ui.lable_value, "Smart Home");
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_make(0xff, 0x00, 0x00));
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 72, 360, 270);
 }
-		
+
 void HassView::UpdateFocusedDevice(const char* name)
 {
 	lv_label_set_text(m_ui.foucs_label, name);
 }
 
-void HassView::SetCtrView(lv_obj_t *obj)
+void HassView::SetCtrView(lv_obj_t* obj)
 {
 	device_t *device = device_map[obj];
 
@@ -77,7 +77,7 @@ int HassView::GetViewMode(void)
 {
 	return current_view;
 }
-void HassView::UpdateCtrlView(PlaygroundInfo *info) 
+void HassView::UpdateCtrlView(HassInfo* info)
 {
 	int _value = 0;
 	int32_t motor_pos = info->motor_pos;
@@ -86,7 +86,7 @@ void HassView::UpdateCtrlView(PlaygroundInfo *info)
 	switch (current_view) {
 		case VIEW_MODE_ON_OFF:
 			_value = info->xkonb_value;
-			PlaygroundView::UpdateBackgroundView(info);
+			HassView::UpdateBackgroundView(info);
 			break;
 		default:
 			break;
@@ -98,7 +98,7 @@ void HassView::UpdateCtrlView(PlaygroundInfo *info)
 		_value?"ON":"OFF"
 	);
 }
-void HassView::UpdateView(PlaygroundInfo *info)
+void HassView::UpdateView(HassInfo* info)
 {
 	if (current_view) {
 		UpdateCtrlView(info);
@@ -113,12 +113,12 @@ void HassView::UpdateView(PlaygroundInfo *info)
 
 }
 
-void Page::HassView::device_item_create(
+void HassView::device_item_create(
     device_t* item,
 	lv_obj_t* par,
 	const char* name,
 	const char* img_src,
-	bool is_on_off, 
+	bool is_on_off,
 	bool is_set_value)
 {
 
@@ -170,7 +170,7 @@ void on_focus(lv_group_t* g)
 	lv_obj_scroll_to_x(cont_row, x, LV_ANIM_ON);
 }
 
-void Page::HassView::group_init(void)
+void HassView::group_init(void)
 {
 	m_ui.group = lv_group_create();
 	lv_group_set_focus_cb(m_ui.group, on_focus);
@@ -184,8 +184,7 @@ void Page::HassView::group_init(void)
 	lv_group_focus_obj(m_ui.monitor_light.cont);
 }
 
-
-void Page::HassView::style_init(void)
+void HassView::style_init(void)
 {
     lv_style_init(&style.cont);
     lv_style_set_width(&style.cont, ITEM_PAD);
@@ -307,7 +306,6 @@ void HassView::Delete()
 	lv_style_reset(&style.focus);
 	lv_style_reset(&style.edit);
 	lv_style_reset(&style.label_name);
-
-	PlaygroundView:Delete();
-	
+	PlaygroundView::Delete();
+	printf("Delete done HassView\n");
 }

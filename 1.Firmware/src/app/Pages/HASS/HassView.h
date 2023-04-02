@@ -4,6 +4,7 @@
 #include "app/app.h"
 #include "../Page.h"
 #include "../Playground/PlaygroundView.h"
+#include "HassModel.h"
 #include <map>
 
 enum HASS_VIEW_MODE {
@@ -27,14 +28,14 @@ public:
     HassView(){}
     void Create(lv_obj_t* root);
     void Delete();
-    void UpdateView(PlaygroundInfo *info);
+    void UpdateView(HassInfo *info);
     void SetPlaygroundMode(int16_t mode);
     void UpdateFocusedDevice(const char* name);
-    void SetCtrView(lv_obj_t *obj);
+	void SetCtrView(lv_obj_t *obj);
     void ClearCtrView(lv_obj_t *obj);
-    void UpdateCtrlView(PlaygroundInfo *info);
-    char* GetEditedDeviceName(void);
-    int GetViewMode(void);
+	void UpdateCtrlView(HassInfo *info);
+	char* GetEditedDeviceName(void);
+	int GetViewMode(void);
     struct
     {
         device_t fan;

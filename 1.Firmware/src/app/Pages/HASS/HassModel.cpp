@@ -1,29 +1,35 @@
 #include "HassModel.h"
 #include "app/Accounts/Account_Master.h"
-#include <Arduino.h>
-#include "hal/motor.h"
-#include "hal/hal.h"
 
 using namespace Page;
 
 HassModel::HassModel()
 {
-    app = APP_MODE_HOME_ASSISTANT;
+	app = APP_MODE_HOME_ASSISTANT;
 }
 
-void HassModel::GetKnobStatus(PlaygroundInfo *info)
+void HassModel::GetKnobStatus(HassInfo* info)
 {
-    PlaygroundModel::GetKnobStatus(info);
-	info->is_ble_connected = HAL::surface_dial_is_connected();
+	PlaygroundModel::GetKnobStatus(info);
 }
-
 
 void HassModel::Init()
 {
-    PlaygroundModel::Init();
+	PlaygroundModel::Init();
+	printf("HassModel: Init start\n");
 }
 
 void HassModel::Deinit()
 {
-    PlaygroundModel::Deinit();
+	PlaygroundModel::Deinit();
+}
+
+void HassModel::ChangeMotorMode(int mode)
+{
+	PlaygroundModel::ChangeMotorMode(mode);
+}
+
+void HassModel::SetPlaygroundMode(int16_t mode)
+{
+	PlaygroundModel::SetPlaygroundMode(mode);
 }

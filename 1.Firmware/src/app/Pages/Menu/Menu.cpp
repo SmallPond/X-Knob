@@ -134,11 +134,12 @@ void Menu::onSuperDialEvent(lv_event_t* event)
 	if (code == LV_EVENT_PRESSED)
 	{
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
-		int16_t mode = APP_MODE_SUPER_DIAL;
-		Stash_t stash;
-		stash.ptr = &mode;
-		stash.size = sizeof(int16_t);
-		instance->Manager->Push("Pages/Playground", &stash);
+//		int16_t mode = APP_MODE_SUPER_DIAL;
+//		Stash_t stash;
+//		stash.ptr = &mode;
+//		stash.size = sizeof(int16_t);
+//		instance->Manager->Push("Pages/SurfaceDial", &stash);
+		instance->Manager->Push("Pages/SurfaceDial");
 	}
 }
 
@@ -150,11 +151,12 @@ void Menu::onHassEvent(lv_event_t* event)
 
 	if (code == LV_EVENT_PRESSED)
 	{
+		printf("Menu: onHassEvent LV_EVENT_PRESSED\n");
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
-		int16_t mode = APP_MODE_HOME_ASSISTANT;
-		Stash_t stash;
-		stash.ptr = &mode;
-		stash.size = sizeof(int16_t);
-		instance->Manager->Push("Pages/Playground", &stash);
+//		int16_t mode = APP_MODE_HOME_ASSISTANT;
+//		Stash_t stash;
+//		stash.ptr = &mode;
+//		stash.size = sizeof(int16_t);
+		instance->Manager->Push("Pages/Hass");
 	}
 }
