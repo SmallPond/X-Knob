@@ -3,15 +3,7 @@
 #include "Arduino.h"
 #include "app/app.h"
 #include "../Page.h"
-
-
-typedef struct {
-    int32_t xkonb_value;
-    int32_t motor_pos;
-    int32_t angle_offset;
-    SuperDialMotion konb_direction;
-    bool is_ble_connected;
-}PlaygroundInfo;
+#include "PlaygroundModel.h"
 
 namespace Page
 {

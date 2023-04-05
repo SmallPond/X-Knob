@@ -2,7 +2,15 @@
 #define __PLAGROUND_MODEL_H
 #include "app/Utils/AccountSystem/Account.h"
 #include "lvgl.h"
-#include "PlaygroundView.h"
+#include "hal/hal.h"
+
+typedef struct
+{
+	int32_t xkonb_value;
+	int32_t motor_pos;
+	int32_t angle_offset;
+	SuperDialMotion konb_direction;
+} PlaygroundInfo;
 namespace Page
 {
 

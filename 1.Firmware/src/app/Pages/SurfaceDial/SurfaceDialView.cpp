@@ -6,15 +6,15 @@ using namespace Page;
  * 默认视图显示： 圆点，原点所在位置 label_value
  * 此函数根据需要增加或 hidden 对象
 */
-void Page::SurfaceDialView::SetPlaygroundMode(int16_t mode)
+void SurfaceDialView::SetPlaygroundMode(int16_t mode)
 {
 	lv_obj_add_flag(ui.lable_value, LV_OBJ_FLAG_HIDDEN);
-	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_make(0xff, 0x00, 0x00));
+	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_black());
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 72, 360, 270);
 }
 		
 
-void Page::SurfaceDialView::UpdateView(PlaygroundInfo *info)
+void SurfaceDialView::UpdateView(SurfaceDialInfo *info)
 {
 
 	static bool is_connected = false;
@@ -44,7 +44,9 @@ void SurfaceDialView::Create(lv_obj_t* root)
 
 void SurfaceDialView::Delete()
 {
-	
-	PlaygroundView:Delete();
-	
+	printf("Deleting SurfaceDialView\n");
+	lv_group_del(ui.group);
+	lv_style_reset(&style.meter);
+	lv_style_reset(&style.ticks);
+	printf("Delete done SurfaceDialView\n");
 }
