@@ -83,7 +83,7 @@ void Page::PlaygroundView::UpdateView(PlaygroundInfo *info)
 	}
 
 	lv_label_set_text_fmt(
-		ui.lable_value,
+		ui.label_value,
 		"%d",
 		_value
 	);
@@ -187,31 +187,31 @@ void PlaygroundView::Create(lv_obj_t* root)
 
 	//Write codes screen_label_1
 
-	ui.lable_value = lv_label_create(root);
-	lv_obj_set_pos(ui.lable_value, 70, 67);
-	lv_obj_set_size(ui.lable_value, 100, 32);
-	lv_obj_set_scrollbar_mode(ui.lable_value, LV_SCROLLBAR_MODE_OFF);
-	lv_label_set_text(ui.lable_value, "0");
-	lv_label_set_long_mode(ui.lable_value, LV_LABEL_LONG_WRAP);
+	ui.label_value = lv_label_create(root);
+	lv_obj_set_pos(ui.label_value, 70, 67);
+	lv_obj_set_size(ui.label_value, 100, 32);
+	lv_obj_set_scrollbar_mode(ui.label_value, LV_SCROLLBAR_MODE_OFF);
+	lv_label_set_text(ui.label_value, "0");
+	lv_label_set_long_mode(ui.label_value, LV_LABEL_LONG_WRAP);
 
-	//Write style state: LV_STATE_DEFAULT for lable_style
-	static lv_style_t lable_style;
-	lv_style_init(&lable_style);
-	lv_style_set_radius(&lable_style, 0);
-	lv_style_set_bg_color(&lable_style, lv_color_make(0x0f, 0x0f, 0x0f));
-	lv_style_set_bg_grad_color(&lable_style, lv_color_make(0x21, 0x95, 0xf6));
-	lv_style_set_bg_grad_dir(&lable_style, LV_GRAD_DIR_NONE);
-	lv_style_set_bg_opa(&lable_style, 0);  // 完全透明
-	lv_style_set_text_color(&lable_style, lv_color_make(0xff, 0xff, 0xff));
-	lv_style_set_text_font(&lable_style, &lv_font_montserrat_26);
-	lv_style_set_text_letter_space(&lable_style, 2);
-	lv_style_set_text_line_space(&lable_style, 0);
-	lv_style_set_text_align(&lable_style, LV_TEXT_ALIGN_CENTER);
-	lv_style_set_pad_left(&lable_style, 0);
-	lv_style_set_pad_right(&lable_style, 0);
-	lv_style_set_pad_top(&lable_style, 8);
-	lv_style_set_pad_bottom(&lable_style, 0);
-	lv_obj_add_style(ui.lable_value, &lable_style, LV_PART_MAIN|LV_STATE_DEFAULT);
+	//Write style state: LV_STATE_DEFAULT for label_style
+	static lv_style_t label_style;
+	lv_style_init(&label_style);
+	lv_style_set_radius(&label_style, 0);
+	lv_style_set_bg_color(&label_style, lv_color_make(0x0f, 0x0f, 0x0f));
+	lv_style_set_bg_grad_color(&label_style, lv_color_make(0x21, 0x95, 0xf6));
+	lv_style_set_bg_grad_dir(&label_style, LV_GRAD_DIR_NONE);
+	lv_style_set_bg_opa(&label_style, 0);  // 完全透明
+	lv_style_set_text_color(&label_style, lv_color_make(0xff, 0xff, 0xff));
+	lv_style_set_text_font(&label_style, &lv_font_montserrat_26);
+	lv_style_set_text_letter_space(&label_style, 2);
+	lv_style_set_text_line_space(&label_style, 0);
+	lv_style_set_text_align(&label_style, LV_TEXT_ALIGN_CENTER);
+	lv_style_set_pad_left(&label_style, 0);
+	lv_style_set_pad_right(&label_style, 0);
+	lv_style_set_pad_top(&label_style, 8);
+	lv_style_set_pad_bottom(&label_style, 0);
+	lv_obj_add_style(ui.label_value, &label_style, LV_PART_MAIN|LV_STATE_DEFAULT);
 
 
 	ui.group = lv_group_create();

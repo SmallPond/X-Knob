@@ -10,8 +10,8 @@ using namespace Page;
 */
 void HassView::SetPlaygroundMode(int16_t mode)
 {
-	lv_obj_add_flag(ui.lable_value, LV_OBJ_FLAG_HIDDEN);
-	// lv_label_set_text(ui.lable_value, "Smart Home");
+	lv_obj_add_flag(ui.label_value, LV_OBJ_FLAG_HIDDEN);
+	// lv_label_set_text(ui.label_value, "Smart Home");
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_make(0xff, 0x00, 0x00));
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 72, 360, 270);
 }
@@ -93,7 +93,7 @@ void HassView::UpdateCtrlView(HassInfo* info)
 	}
 
 	lv_label_set_text_fmt(
-		ui.lable_value,
+		ui.label_value,
 		"%s",
 		_value?"ON":"OFF"
 	);

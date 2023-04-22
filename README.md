@@ -92,7 +92,18 @@ cp src/secrets.h.example src/secrets.h
 # 该宏用来附带在 MQTT Topic 中
 #define MQTT_HOST               "dingmos"      
 ```
-2. 编译 && flash && enjoy 
+
+2. 选择是否使用 MQTT 功能
+
+若暂时不使用 MQTT 功能或没有配置好 WiFi 需要修改 platform.ini 文件来禁用 MQTT 功能
+
+```
+-DXK_MQTT=0 
+``` 
+
+这种方式将保留 Smart Home(S-Home)的 UI 供玩耍，但不会连接 WiFi 和调用 MQTT 发送消息。
+
+3. 编译 && flash && enjoy 
 
 关于固件下载的**注意事项** ：
 - ESP32-S3 支持 USB 下载，可以在不拆开 X-knob 的情况下直接升级固件，参考[#5](https://github.com/SmallPond/X-Knob/issues/5) 

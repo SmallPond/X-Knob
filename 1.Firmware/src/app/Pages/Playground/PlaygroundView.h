@@ -33,7 +33,7 @@ public:
     {
         lv_obj_t* meter;
         lv_meter_scale_t* scale_pot;   // 圆点的刻度
-        lv_obj_t* lable_value;
+        lv_obj_t* label_value;
         lv_meter_indicator_t* nd_img_circle;
         lv_meter_scale_t* scale_arc;   // arc 的刻度
         lv_meter_indicator_t* arc;
