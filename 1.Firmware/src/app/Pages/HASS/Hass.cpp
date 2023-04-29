@@ -50,7 +50,6 @@ void Hass::onCustomAttrConfig()
 
 void Hass::onViewLoad()
 {
-	printf("Hass: onViewLoad\n");
 	Model = new HassModel();
 	View = new HassView();
 
@@ -61,12 +60,10 @@ void Hass::onViewLoad()
 
 	AttachEvent(root);
 	AttachEvent(View->ui.meter);
-	//APP_MODE_HOME_ASSISTANT
 
-	AttachEvent(((HassView*)View)->m_ui.fan.cont);
-	AttachEvent(((HassView*)View)->m_ui.monitor_light.cont);
-	AttachEvent(((HassView*)View)->m_ui.air_conditioning.cont);
-	AttachEvent(((HassView*)View)->m_ui.wash_machine.cont);
+	for(int i = 0; i < DEVICE_NUM; i++) {
+		AttachEvent((View->m_ui->devices[i]).cont);
+	}
 }
 
 void Hass::AttachEvent(lv_obj_t* obj)
@@ -82,7 +79,6 @@ void Hass::onViewDidLoad()
 
 void Hass::onViewWillAppear()
 {
-	printf("Hass: onViewWillAppear\n");
 	Model->ChangeMotorMode(motor_mode);
 	Model->SetPlaygroundMode(app_mode);
 	View->SetPlaygroundMode(app_mode);
@@ -142,17 +138,13 @@ void Hass::HassEventHandler(lv_event_t* event, lv_event_code_t code)
 	lv_obj_t* obj = lv_event_get_target(event);
 	lv_obj_t* label = lv_obj_get_child(obj, 1);
 
-	if (code < LV_EVENT_RELEASED) {
-		printf("code: %d\n", code);
-	}
-
 	if (code == LV_EVENT_FOCUSED) {
 		if (label != NULL) {
 			printf("fouces, name:%s\n", lv_label_get_text(label));
 			((HassView*)View)->UpdateFocusedDevice(lv_label_get_text(label));
 		}
 	}
-	if (code == LV_EVENT_PRESSED)
+	if (code == LV_EVENT_SHORT_CLICKED)
 	{
 		if (!lv_obj_has_state(obj, LV_STATE_EDITED)) {
 			if (label != NULL) {

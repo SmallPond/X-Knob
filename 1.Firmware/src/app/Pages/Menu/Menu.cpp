@@ -149,14 +149,9 @@ void Menu::onHassEvent(lv_event_t* event)
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Menu*)lv_obj_get_user_data(obj);
 
-	if (code == LV_EVENT_PRESSED)
+	if (code == LV_EVENT_SHORT_CLICKED)
 	{
 		printf("Menu: onHassEvent LV_EVENT_PRESSED\n");
-		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
-//		int16_t mode = APP_MODE_HOME_ASSISTANT;
-//		Stash_t stash;
-//		stash.ptr = &mode;
-//		stash.size = sizeof(int16_t);
 		instance->Manager->Push("Pages/Hass");
 	}
 }
