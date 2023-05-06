@@ -19,7 +19,6 @@ void SurfaceDial::onCustomAttrConfig()
 
 void SurfaceDial::onViewLoad()
 {
-	printf("SurfaceDial: onViewLoad\n");
 	Model = new SurfaceDialModel();
 	View = new SurfaceDialView();
 	HAL::surface_dial_init();
@@ -57,21 +56,13 @@ void SurfaceDial::onViewDidUnload()
 
 void SurfaceDial::SurfaceDialEventHandler(lv_event_t* event, lv_event_code_t code)
 {
-	if (code == LV_EVENT_PRESSED)
-	{
-		printf("SurfaceDial: press\n");
+	if (code == LV_EVENT_SHORT_CLICKED) {
 		HAL::surface_dial_press();
-	}
-	else if (code == LV_EVENT_LONG_PRESSED_REPEAT)
-	{
+	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
-		printf("SurfaceDial: LV_EVENT_LONG_PRESSED_REPEAT\n");
 		Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 		Manager->Pop();
-	}
-	else if (code == LV_EVENT_RELEASED)
-	{
-		printf("SurfaceDial: release\n");
+	} else if (code == LV_EVENT_RELEASED) {
 		HAL::surface_dial_release();
 	}
 }

@@ -7,7 +7,9 @@ BleKeyboard bleKeyboard("Surface Dial(X)");
 
 void HAL::surface_dial_init(void)
 {
-    bleKeyboard.begin();
+    if(!bleKeyboard.isConnected()) {
+        bleKeyboard.begin();
+    }   
 }
 
 bool HAL::surface_dial_is_connected(void)
