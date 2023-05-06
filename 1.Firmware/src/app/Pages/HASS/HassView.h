@@ -7,6 +7,8 @@
 #include "HassModel.h"
 #include <map>
 
+#define DEVICE_NUM 4
+
 enum HASS_VIEW_MODE {
     VIEW_MODE_ON_OFF = 1,
 };
@@ -36,15 +38,12 @@ public:
 	void UpdateCtrlView(HassInfo *info);
 	char* GetEditedDeviceName(void);
 	int GetViewMode(void);
-    struct
+    struct device_ui 
     {
-        device_t fan;
-        device_t monitor_light;
-        device_t air_conditioning;
-        device_t wash_machine;
         lv_obj_t* foucs_label;
         lv_group_t* group;
-    } m_ui;
+        device_t devices[0];
+    } *m_ui;
 
 private:
     int current_view = 0;

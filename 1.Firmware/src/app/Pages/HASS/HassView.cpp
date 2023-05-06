@@ -18,7 +18,7 @@ void HassView::SetPlaygroundMode(int16_t mode)
 
 void HassView::UpdateFocusedDevice(const char* name)
 {
-	lv_label_set_text(m_ui.foucs_label, name);
+	lv_label_set_text(m_ui->foucs_label, name);
 }
 
 void HassView::SetCtrView(lv_obj_t* obj)
@@ -166,22 +166,20 @@ void on_focus(lv_group_t* g)
 	lv_obj_t* cont_row = lv_obj_get_parent(cont);
 	lv_coord_t x = lv_obj_get_x(cont);
     lv_coord_t width = lv_obj_get_width(cont);
-    // printf("device x: %d, width: %d\n", x, width);
 	lv_obj_scroll_to_x(cont_row, x, LV_ANIM_ON);
 }
 
 void HassView::group_init(void)
 {
-	m_ui.group = lv_group_create();
-	lv_group_set_focus_cb(m_ui.group, on_focus);
-	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), m_ui.group);
+	m_ui->group = lv_group_create();
+	lv_group_set_focus_cb(m_ui->group, on_focus);
+	lv_indev_set_group(lv_get_indev(LV_INDEV_TYPE_ENCODER), m_ui->group);
 
-	lv_group_add_obj(m_ui.group, m_ui.monitor_light.cont);
-	lv_group_add_obj(m_ui.group, m_ui.fan.cont);
-    lv_group_add_obj(m_ui.group, m_ui.air_conditioning.cont);
-    lv_group_add_obj(m_ui.group, m_ui.wash_machine.cont);
-
-	lv_group_focus_obj(m_ui.monitor_light.cont);
+	for(int i = 0; i < DEVICE_NUM; i++) {
+		lv_group_add_obj(m_ui->group, (m_ui->devices[i]).cont);
+	}
+	
+	// lv_group_focus_obj(m_ui->devices[0].cont);
 }
 
 void HassView::style_init(void)
@@ -248,11 +246,16 @@ void HassView::Create(lv_obj_t* root)
     lv_obj_set_style_pad_hor(cont_row, ITEM_PAD, 0);
 
     // lv_obj_remove_style(obj, style, LV_PART_SCROLLBAR)
-
     style_init();
 
+    m_ui = (device_ui *)malloc(sizeof(device_ui) + DEVICE_NUM * sizeof(device_t)); 
+	if (m_ui == NULL) {
+		printf("malloc m_ui failed\n");
+		return;
+	}
+
     device_item_create(
-      &(m_ui.monitor_light),
+      &(m_ui->devices[0]),
       cont_row,
       "Light",
       "home_bulb",
@@ -261,7 +264,7 @@ void HassView::Create(lv_obj_t* root)
     );
 
 	device_item_create(
-      &(m_ui.fan),
+      &(m_ui->devices[1]),
       cont_row,
       "Fan",
       "home_fan",
@@ -270,7 +273,7 @@ void HassView::Create(lv_obj_t* root)
     );
 
     device_item_create(
-      &m_ui.air_conditioning,
+      &(m_ui->devices[2]),
       cont_row,
       "Air Conditioning",
       "home_air_cond",
@@ -279,7 +282,7 @@ void HassView::Create(lv_obj_t* root)
     );
 
     device_item_create(
-      &m_ui.wash_machine,
+      &(m_ui->devices[3]),
       cont_row,
       "Wash Machine",
       "home_wash_machine",
@@ -287,13 +290,13 @@ void HassView::Create(lv_obj_t* root)
 	  false
     );
 
-    m_ui.foucs_label = lv_label_create(root);
-	lv_obj_add_style(m_ui.foucs_label, &style.label_name, 0);
-    lv_label_set_text_fmt(m_ui.foucs_label, "%s", "NONE");
-    lv_obj_align(m_ui.foucs_label, LV_ALIGN_CENTER, 0, ITEM_PAD+10);
+    m_ui->foucs_label = lv_label_create(root);
+	lv_obj_add_style(m_ui->foucs_label, &style.label_name, 0);
+    lv_label_set_text_fmt(m_ui->foucs_label, "%s", "NONE");
+    lv_obj_align(m_ui->foucs_label, LV_ALIGN_CENTER, 0, ITEM_PAD+10);
 	
-    // lv_obj_set_size(m_ui.foucs_label, 42, 20);
-    // lv_obj_center(m_ui.foucs_label);
+    // lv_obj_set_size(m_ui->foucs_label, 42, 20);
+    // lv_obj_center(m_ui->foucs_label);
 
     group_init();
 }
@@ -301,11 +304,10 @@ void HassView::Create(lv_obj_t* root)
 
 void HassView::Delete()
 {
-	lv_group_del(m_ui.group);
+	lv_group_del(m_ui->group);
 	lv_style_reset(&style.cont);
 	lv_style_reset(&style.focus);
 	lv_style_reset(&style.edit);
 	lv_style_reset(&style.label_name);
 	PlaygroundView::Delete();
-	printf("Delete done HassView\n");
 }
