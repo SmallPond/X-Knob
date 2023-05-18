@@ -1,6 +1,7 @@
 #include "Hass.h"
 #include "hal/hal.h"
 #include "config.h"
+#include "hal/nvs.h"
 
 using namespace Page;
 
@@ -21,8 +22,11 @@ void hass_hal_init(void)
 int hass_hal_send(const char *device_name, int knob_value)
 {
 	char topic_name[128];
-
-	snprintf(topic_name, sizeof(topic_name),"%s/HOME/%s", MQTT_HOST, device_name);
+	String password,host,username,topic;
+	uint16_t port;
+	get_mqtt_config(host,port,username,password,topic);
+	const char * mqtt_topic = topic.c_str();
+	snprintf(topic_name, sizeof(topic_name),"%s/HOME/%s", mqtt_topic, device_name);
 	if (knob_value < HASS_MAX && playload_str[knob_value] != NULL) {
 		printf("mqtt send: %s:%s\n", topic_name, playload_str[knob_value]);
 		return HAL::mqtt_publish(topic_name, playload_str[knob_value]);
@@ -144,8 +148,7 @@ void Hass::HassEventHandler(lv_event_t* event, lv_event_code_t code)
 			((HassView*)View)->UpdateFocusedDevice(lv_label_get_text(label));
 		}
 	}
-	if (code == LV_EVENT_SHORT_CLICKED)
-	{
+	if (code == LV_EVENT_SHORT_CLICKED) {
 		if (!lv_obj_has_state(obj, LV_STATE_EDITED)) {
 			if (label != NULL) {
 				printf("Control device: %s\n", lv_label_get_text(label));

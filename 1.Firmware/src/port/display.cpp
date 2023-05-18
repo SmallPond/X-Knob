@@ -1,6 +1,7 @@
 #include "display.h"
 #include "config.h"
 #include "hal/hal.h"
+#include "hal/nvs.h"
 
 TaskHandle_t handleTaskLvgl;
 void TaskLvglUpdate(void* parameter)
@@ -22,8 +23,10 @@ void display_init(void)
     screen.begin();
     screen.fillScreen(BLACK);
 #ifdef TFT_BLK
-    pinMode(TFT_BLK, OUTPUT);
-    digitalWrite(TFT_BLK, HIGH);
+    //pinMode(TFT_BLK, OUTPUT);
+    //digitalWrite(TFT_BLK, HIGH);
+    HAL::lcd_brightness_init();
+    HAL::set_lcd_brightness(get_lcd_bk_brightness());
 #endif
     lv_init();
     lv_port_disp_init(&screen);

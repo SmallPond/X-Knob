@@ -65,6 +65,12 @@ do{\
         IMPORT_IMG(home_bulb);
         IMPORT_IMG(home_air_cond);
         IMPORT_IMG(home_wash_machine);
+
+        //Setting
+        IMPORT_IMG(setting);
+        IMPORT_IMG(setting_wifi);
+        IMPORT_IMG(setting_timer);
+        IMPORT_IMG(setting_brightness);
     }
 
 } /* extern "C" */

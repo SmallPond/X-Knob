@@ -32,6 +32,7 @@ private:
     static void onSuperDialEvent(lv_event_t* event);
     static void onSystemEvent(lv_event_t* event);
     static void onHassEvent(lv_event_t* event);
+    static void onSettingEvent(lv_event_t* event);
 private:
     MenuView View;
     MenuModel Model;

@@ -26,6 +26,9 @@ app_mode_config_t app_config[] = {
 	[APP_MODE_HOME_ASSISTANT] = {
 		.motor_mode = MOTOR_UNBOUND_COARSE_DETENTS,
 	},
+	[APP_MODE_SETTING] = {
+		.motor_mode = MOTOR_UNBOUND_COARSE_DETENTS,
+	},
 };
 
 int16_t app = 0;
@@ -63,7 +66,6 @@ void Playground::onViewLoad()
 
 	Model->Init();
 	View->Create(root);
-
 	
 	// lv_label_set_text(View->ui.labelTitle, Name);
 
@@ -175,8 +177,8 @@ void Playground::onEvent(lv_event_t* event)
 	switch (app) {
 		case PLAYGROUND_MODE_NO_EFFECTS:
 		case PLAYGROUND_MODE_FINE_DETENTS:
-    	case PLAYGROUND_MODE_BOUND:
-    	case PLAYGROUND_MODE_ON_OFF:
+		case PLAYGROUND_MODE_BOUND:
+		case PLAYGROUND_MODE_ON_OFF:
 			instance->PlayEventHandler(event, code);
 			break;
 		default:

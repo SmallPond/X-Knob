@@ -4,6 +4,8 @@
 #include "usb_cdc.h"
 #include "app/ui/ui.h"
 #include "hal/hal.h"
+#include "hal/nvs.h"
+#include "web/WiFiAsyncWebServer.h"
 
 void push_handler(ButtonEvent* btn, int event)
 {
@@ -24,6 +26,8 @@ void push_handler(ButtonEvent* btn, int event)
 
 void setup() {
     HAL::Init();
+    nvs_init();
+    ffat_init();
     strip_init();
     // HWSerial.begin(115200);
     display_init();

@@ -27,6 +27,7 @@ void Menu::onViewLoad()
 	AttachEvent(View.ui.switches.icon, onPlaygroundEvent);
 	AttachEvent(View.ui.hass.icon, onHassEvent);
 	AttachEvent(View.ui.system.icon, onSystemEvent);
+	AttachEvent(View.ui.setting.icon, onSettingEvent);
 	// AttachEvent(View.ui.imu.icon);
 	// AttachEvent(View.ui.battery.icon);
 	// AttachEvent(View.ui.storage.icon);
@@ -104,23 +105,32 @@ void Menu::onPlaygroundEvent(lv_event_t* event)
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Menu*)lv_obj_get_user_data(obj);
 
-	if (code == LV_EVENT_PRESSED)
-	{
+	if (code == LV_EVENT_PRESSED) {
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 		instance->Manager->Push("Pages/Playground");
 	}
 }
+
 
 void Menu::onSystemEvent(lv_event_t* event)
 {
 	lv_obj_t* obj = lv_event_get_target(event);
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Menu*)lv_obj_get_user_data(obj);
-
-	if (code == LV_EVENT_PRESSED)
-	{
+	if (code == LV_EVENT_PRESSED) {
 		Serial.printf("Power off...\n");
 		HAL::power_off();
+	}
+}
+
+void Menu::onSettingEvent(lv_event_t* event)
+{
+	lv_obj_t* obj = lv_event_get_target(event);
+	lv_event_code_t code = lv_event_get_code(event);
+	auto* instance = (Menu*)lv_obj_get_user_data(obj);
+	if (code == LV_EVENT_PRESSED) {
+		printf("Menu: onSystemEvent LV_EVENT_PRESSED\n");
+		instance->Manager->Push("Pages/Setting");
 	}
 }
 
@@ -131,8 +141,7 @@ void Menu::onSuperDialEvent(lv_event_t* event)
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Menu*)lv_obj_get_user_data(obj);
 
-	if (code == LV_EVENT_PRESSED)
-	{
+	if (code == LV_EVENT_PRESSED) {
 		// instance->Model.ChangeMotorMode(MOTOR_FINE_DETENTS);
 //		int16_t mode = APP_MODE_SUPER_DIAL;
 //		Stash_t stash;
@@ -149,8 +158,7 @@ void Menu::onHassEvent(lv_event_t* event)
 	lv_event_code_t code = lv_event_get_code(event);
 	auto* instance = (Menu*)lv_obj_get_user_data(obj);
 
-	if (code == LV_EVENT_SHORT_CLICKED)
-	{
+	if (code == LV_EVENT_SHORT_CLICKED) {
 		printf("Menu: onHassEvent LV_EVENT_PRESSED\n");
 		instance->Manager->Push("Pages/Hass");
 	}

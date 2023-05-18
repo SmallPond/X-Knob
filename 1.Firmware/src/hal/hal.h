@@ -31,7 +31,7 @@ namespace HAL
     void motor_init(void);
     // void TaskMotorUpdate(void *pvParameters);
     int get_motor_position(void);
-    void update_motor_mode(int mode);
+    void update_motor_mode(int mode, int init_position);
     void motor_shake(int strength, int delay_time);
 
     void surface_dial_init(void);
@@ -50,6 +50,9 @@ namespace HAL
     void mqtt_init(void);
     int mqtt_publish(const char *topic, const char *playload);
     int mqtt_subscribe(const char *topic);
+
+    void lcd_brightness_init();
+    void set_lcd_brightness(int value);
 }
 
 
