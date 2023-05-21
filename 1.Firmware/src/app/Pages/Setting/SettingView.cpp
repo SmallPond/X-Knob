@@ -340,7 +340,7 @@ void SettingView::Create(lv_obj_t* root)
     setting_item_create(
     &(m_ui->setting[0]),
     cont_row,
-    "WiFi Setting",
+    "WiFi Setting(OTA)",
     "setting_wifi",
     WIFI_SETTING_VIEW
     );
@@ -348,7 +348,7 @@ void SettingView::Create(lv_obj_t* root)
     setting_item_create(
     &(m_ui->setting[1]),
     cont_row,
-    "LCD BK Timeout",
+    "Screen Auto-OFF Time",
     "setting_timer",
     LCD_BK_TIMEOUT_SETTING_VIEW
     );

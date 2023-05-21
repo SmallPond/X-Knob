@@ -68,8 +68,11 @@ X-KNOB 支持的特性：
 - [x] 电源管理
   - 电池管理、系统深度休眠；
   - V2（最新） 硬件支持 UPS
+  - 自动熄屏
 - [x] X-Knob 通过 MQTT 接入 Home Assistant，可实现控制接入 HASS 的设备
- 
+- [x] 屏幕亮度调节、WiFi 和 MQTT 的 Web 配置
+- [x] 支持 OTA 升级
+
 待支持的特性：
 - [ ] 基于 ESP32-S3 USB CDC 实现类似 Electron_Bot 的电脑配件模式
 

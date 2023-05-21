@@ -80,10 +80,12 @@ void MenuView::Create(lv_obj_t* root)
 		root,
 		"Setting",
 		"setting",
-
+		
+		"OTA\n"
 		"WiFi Setting\n"
-		"LCD BK Setting\n"
-		"LCD BK Timout Setting\n"
+		"Screen Auto-OFF Time\n"
+		"LCD BK Brightness\n"
+		
 	);
 	
 
