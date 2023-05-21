@@ -18,6 +18,10 @@ void Page::PlaygroundView::SetPlaygroundMode(int16_t mode)
 			// This mode is default
 			break;
 		case PLAYGROUND_MODE_BOUND:
+			MIN_VALUE = 0;
+			MAX_VALUE = 12;
+			SCALE_LEFT_BOUND_TICKS = 200;
+			SCALE_ANGLE_RANGE = 140;
 			BoundZeroView();
 			break;
 		case PLAYGROUND_MODE_ON_OFF:
@@ -52,7 +56,7 @@ void Page::PlaygroundView::UpdateView(PlaygroundInfo *info)
 		case PLAYGROUND_MODE_NO_EFFECTS:
 			break;
 		case PLAYGROUND_MODE_FINE_DETENTS:
-	    	// This mode is default
+			// This mode is default
 			_value = info->motor_pos;
 			break;
 		case PLAYGROUND_MODE_BOUND:
@@ -72,7 +76,6 @@ void Page::PlaygroundView::UpdateView(PlaygroundInfo *info)
 				lv_meter_set_indicator_start_value(ui.meter, ui.arc, 0);
 				lv_meter_set_indicator_end_value(ui.meter, ui.arc, 0);
 			}
-			
 			break;
 		case PLAYGROUND_MODE_ON_OFF:
 			_value = info->xkonb_value;
@@ -112,25 +115,19 @@ void PlaygroundView::OnOffView(void)
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 1, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
 }
 
-void PlaygroundView::BoundZeroView(void)
+void PlaygroundView::BoundZeroView()
 {
-	MIN_VALUE = 0;
-	MAX_VALUE = 12;
-	SCALE_LEFT_BOUND_TICKS = 200;
-	SCALE_ANGLE_RANGE = 140;
 	SCALE_RIGHT_BOUND_TICKS = SCALE_LEFT_BOUND_TICKS + SCALE_ANGLE_RANGE;
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 13, 2, 0, lv_color_make(0xff, 0xff, 0xff));
 	lv_meter_set_scale_major_ticks(ui.meter, ui.scale_pot, 12, 4, 20, lv_color_make(0xff, 0xff, 0xff), 10);
-	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 12, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
+	lv_meter_set_scale_range(ui.meter, ui.scale_pot, MIN_VALUE , MAX_VALUE, SCALE_ANGLE_RANGE, SCALE_LEFT_BOUND_TICKS);
 
 	// display out of bounds
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_arc, 40, 0, 0, lv_color_make(0xff, 0x00, 0x00));
 	lv_meter_set_scale_range(ui.meter, ui.scale_arc, 0, 360, 360, ARC_START_ROTATION);
 	lv_meter_set_indicator_start_value(ui.meter, ui.arc, 0);
 	lv_meter_set_indicator_end_value(ui.meter, ui.arc, 0);
-
 }
-
 
 
 void PlaygroundView::Create(lv_obj_t* root)

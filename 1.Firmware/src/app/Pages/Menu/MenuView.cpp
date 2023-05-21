@@ -48,8 +48,6 @@ void MenuView::Create(lv_obj_t* root)
 		"Return-to-center\n"
 		"Fine values\n"
 		"Coarse values\n"
-
-
 	);
 	Item_Create(
 		&ui.hass,
@@ -62,6 +60,7 @@ void MenuView::Create(lv_obj_t* root)
 		"Fan \n"
 		"Monitor Bar"
 	);
+	// /* Item Setting */
 	// /* Item System */
 	Item_Create(
 		&ui.system,
@@ -76,6 +75,17 @@ void MenuView::Create(lv_obj_t* root)
 		"Compiler\n\n"
 		"Build\n"
 	);
+	Item_Create(
+		&ui.setting,
+		root,
+		"Setting",
+		"setting",
+
+		"WiFi Setting\n"
+		"LCD BK Setting\n"
+		"LCD BK Timout Setting\n"
+	);
+	
 
 
 
@@ -117,6 +127,7 @@ void MenuView::Group_Init()
 	lv_group_add_obj(ui.group, ui.switches.icon);
 	lv_group_add_obj(ui.group, ui.hass.icon);
 	lv_group_add_obj(ui.group, ui.system.icon);
+	lv_group_add_obj(ui.group, ui.setting.icon);
 	// lv_group_add_obj(ui.group, ui.battery.icon);
 	// lv_group_add_obj(ui.group, ui.storage.icon);
 

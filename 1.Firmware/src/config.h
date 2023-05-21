@@ -26,7 +26,13 @@
 #define LVGL_RUNNING_CORE   0            
 #define ESP32_RUNNING_CORE  1            
 
- // The owner of the X-Knob
-#define MQTT_HOST               "dingmos"        
+ // The owner of the X-Knob      
+#define MQTT_HOST               "dingmos"  
+
+
+#define LCD_BK_DEFAULT_BRIGHTNESS  50
+#define LCD_BK_DEFAULT_TIMEOUT     5
+#define DEBUG_PRINT                1
+
 
 #endif 

@@ -87,4 +87,3 @@ static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 
     data->state =  HAL::encoder_is_pushed() ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
 }
-

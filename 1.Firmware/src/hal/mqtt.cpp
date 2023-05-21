@@ -4,11 +4,10 @@
 #if XK_MQTT
 
 #include <Arduino.h>
-#include "secrets.h"
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "config.h"
-
+#include "hal/nvs.h"
 
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
@@ -16,17 +15,23 @@ int mqtt_last_connect_time_ = 0;
 
 
 void setup_wifi() {
-    Serial.printf("connecting to WiFi..: %s\n", WIFI_SSID);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    String ssid,password;
+    get_wifi_config(ssid,password);
+    #if DEBUG_PRINT
+        printf("connecting to WiFi..: %s\n", ssid);
+    #endif
+    const char *wifi_name = ssid.c_str();  //去掉const會顯示編譯錯誤
+    const char *wifi_pass = password.c_str();  //去掉const會顯示編譯錯誤
+    WiFi.begin(wifi_name, wifi_pass );
     
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print(".");
         delay(500);
     }
 
-    Serial.printf("Connected to network %s\n", WIFI_SSID);
-
-
+    #if DEBUG_PRINT
+        printf("Connected to network %s\n", ssid);
+    #endif
 }
 
 void mqttCallback(char *topic, byte *payload, unsigned int length) {
@@ -40,17 +45,33 @@ void connectMQTT() {
     if (WiFi.status() != WL_CONNECTED) {
         setup_wifi();
     }
-    Serial.println("Attempting MQTT connection...");
-#ifdef MQTT_PASSWORD 
-    if (mqtt_client.connect(MQTT_USER, MQTT_USER, MQTT_PASSWORD)) {
-#else 
-    if (mqtt_client.connect(MQTT_USER)) {
-#endif 
-        Serial.printf("MQTT connected");
-    } else {
-        Serial.printf("MQTT failed rc=%d will try again in 5 seconds", mqtt_client.state());
+    String password,host,username,topic;
+    uint16_t port;
+    get_mqtt_config(host,port,username,password,topic);
+    const char *mqtt_user = username.c_str();  //去掉const會顯示編譯錯誤
+    const char *mqtt_pass = password.c_str();  //去掉const會顯示編譯錯誤
 
+    Serial.println("Attempting MQTT connection...");
+    bool result;
+
+    if(password.length() > 0){
+        #if DEBUG_PRINT
+            printf("MQTT connect with password |%s| , |%s|\n" , mqtt_user , mqtt_pass );
+        #endif
+        result = mqtt_client.connect(mqtt_user, mqtt_user, mqtt_pass);
+    }else{
+        #if DEBUG_PRINT
+            printf("MQTT connect |%s| \n" , mqtt_user );
+        #endif
+        result = mqtt_client.connect(mqtt_user);
     }
+    #if DEBUG_PRINT
+    if (result) {
+        printf("MQTT connected\n");
+    } else {
+        printf("MQTT failed rc=%d will try again in 5 seconds\n", mqtt_client.state());
+    }
+    #endif
 
     Serial.flush();
 }
@@ -89,10 +110,19 @@ int HAL::mqtt_publish(const char *topic, const char *playload)
     return ret;
 }
 
+char mqtt_host[50];
+
 void HAL::mqtt_init(void) {
     
     setup_wifi();
-    mqtt_client.setServer(MQTT_SERVER, MQTT_PORT);
+    String password,host,username,topic;
+    uint16_t port;
+    get_mqtt_config(host,port,username,password,topic);
+    sprintf(mqtt_host , "%s" , host.c_str());
+    #if DEBUG_PRINT
+        printf("MQTT connect host |%s|:|%d|\n" , mqtt_host , port );
+    #endif
+    mqtt_client.setServer(mqtt_host, port);
     // connectMQTT();
     mqtt_client.setCallback(mqttCallback);
     xTaskCreatePinnedToCore(
@@ -102,7 +132,8 @@ void HAL::mqtt_init(void) {
         nullptr,
         2,
         &handleTaskMqtt,
-        ESP32_RUNNING_CORE);
+        ESP32_RUNNING_CORE
+    );
 }
 #else 
 void HAL::mqtt_init(void) {

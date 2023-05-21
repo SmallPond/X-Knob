@@ -36,6 +36,8 @@ typedef enum
     MOTOR_SUPER_DIAL, 
     MOTOR_UNBOUND_COARSE_DETENTS, // Coarse values\nStrong detents\n unbound
     MOTOR_BOUND_0_12_NO_DETENTS,
+    MOTOR_BOUND_LCD_BK_BRIGHTNESS,
+    MOTOR_BOUND_LCD_BK_TIMEOUT,
     MOTOR_COARSE_DETENTS,       // Coarse values\nStrong detents
     MOTOR_FINE_NO_DETENTS,     // Fine values\nNo detents
     MOTOR_ON_OFF_STRONG_DETENTS,             // "On/off\nStrong detent"

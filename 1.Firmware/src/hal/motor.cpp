@@ -66,6 +66,24 @@ static XKnobConfig x_knob_configs[] = {
         1.1,
         "Bounded 0-13\nNo detents",
     },
+    [MOTOR_BOUND_LCD_BK_BRIGHTNESS]= {
+        101,
+        10,
+        2 * PI / 180,
+        2,
+        1,
+        1.1,
+        "Bounded 0-101\nNo detents",
+    },
+    [MOTOR_BOUND_LCD_BK_TIMEOUT]= {
+        31,
+        0,
+        5 * PI / 180,
+        2,
+        1,
+        1.1,
+        "Bounded 0-3601\nNo detents",
+    },
     [MOTOR_COARSE_DETENTS] = {
         32,
         0,
@@ -189,9 +207,10 @@ int HAL::get_motor_position(void)
     return motor_config.position;
 }
 
-void HAL::update_motor_mode(int mode)
+void HAL::update_motor_mode(int mode , int init_position)
 {
     motor_config = x_knob_configs[mode];
+    motor_config.position = init_position;
     #if XK_INVERT_ROTATION
         current_detent_center = -motor.shaft_angle;
     #else 

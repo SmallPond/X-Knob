@@ -84,6 +84,7 @@ typedef struct
 {
     Motor_Cmd_t cmd;
     int motor_mode;
+    int init_position;
 } Motor_Info_t;
 
 /* SysConfig */
