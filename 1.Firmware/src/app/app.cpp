@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "App.h"
+#include "app.h"
 #include "hal/hal.h"
 #include "Utils/PageManager/PageManager.h"
 #include "Accounts/Account_Master.h"

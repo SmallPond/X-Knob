@@ -2,7 +2,7 @@
 #define __STARTUP_MODEL_H
 
 #include "app/Accounts/Account_Master.h"
-#include "HAL/HAL.h"
+#include "hal/hal.h"
 
 namespace Page
 {

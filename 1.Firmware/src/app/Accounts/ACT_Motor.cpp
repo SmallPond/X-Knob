@@ -1,5 +1,5 @@
 #include "Account_Master.h"
-#include "HAL/HAL.h"
+#include "hal/hal.h"
 #include "app/Configs/Config.h"
 
 using namespace AccountSystem;
