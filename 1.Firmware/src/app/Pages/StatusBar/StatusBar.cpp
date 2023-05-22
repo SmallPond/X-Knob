@@ -22,7 +22,7 @@
  */
 #include "StatusBar.h"
 #include "app/Accounts/Account_Master.h"
-#include "HAL/HAL.h"
+#include "hal/hal.h"
 
 #define BATT_USAGE_HEIGHT (lv_obj_get_style_height(ui.battery.img, 0) - 6)
 #define BATT_USAGE_WIDTH  (lv_obj_get_style_width(ui.battery.img, 0) - 4)
