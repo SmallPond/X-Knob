@@ -22,8 +22,9 @@ void hass_hal_init(void)
 int hass_hal_send(const char *device_name, int knob_value)
 {
 	char topic_name[128];
-	String password,host,username,topic;
 	uint16_t port;
+	String password, host, username, topic;
+
 	get_mqtt_config(host,port,username,password,topic);
 	const char * mqtt_topic = topic.c_str();
 	snprintf(topic_name, sizeof(topic_name),"%s/HOME/%s", mqtt_topic, device_name);
@@ -43,7 +44,6 @@ Hass::Hass()
 
 Hass::~Hass()
 {
-
 }
 
 void Hass::onCustomAttrConfig()
@@ -56,8 +56,6 @@ void Hass::onViewLoad()
 {
 	Model = new HassModel();
 	View = new HassView();
-
-	hass_hal_init();
 
 	Model->Init();
 	View->Create(root);
@@ -87,6 +85,7 @@ void Hass::onViewWillAppear()
 	Model->SetPlaygroundMode(app_mode);
 	View->SetPlaygroundMode(app_mode);
 
+	hass_hal_init();
 	timer = lv_timer_create(onTimerUpdate, 10, this);
 }
 
@@ -119,11 +118,9 @@ void Hass::Update()
 {
 	HassInfo info;
 	Model->GetKnobStatus(&info);
-	if (info.konb_direction != SUPER_DIAL_NULL)
-	{
+	if (info.konb_direction != SUPER_DIAL_NULL) {
 		char* name = ((HassView*)View)->GetEditedDeviceName();
-		if (name != NULL)
-		{
+		if (name != NULL) {
 			hass_hal_send(name, info.konb_direction);
 		}
 	}
@@ -163,7 +160,6 @@ void Hass::HassEventHandler(lv_event_t* event, lv_event_code_t code)
 			hass_hal_send(lv_label_get_text(label), HASS_PUSH);
 		}
 	} else if (code == LV_EVENT_LONG_PRESSED) {
-		printf("Hass: LV_EVENT_LONG_PRESSED\n");
 		if (lv_obj_has_state(obj, LV_STATE_EDITED)) {
 			((HassView*)View)->ClearCtrView(obj);
 			lv_obj_clear_state(obj, LV_STATE_EDITED);
@@ -173,7 +169,6 @@ void Hass::HassEventHandler(lv_event_t* event, lv_event_code_t code)
 	} else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {
 		// return to memu
 		if (!lv_obj_has_state(obj, LV_STATE_EDITED)){
-			printf("Hass: LV_EVENT_LONG_PRESSED_REPEAT\n");
 			Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
 			Manager->Pop();
 		}

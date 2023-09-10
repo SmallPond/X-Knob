@@ -11,7 +11,6 @@ using namespace Page;
 void HassView::SetPlaygroundMode(int16_t mode)
 {
 	lv_obj_add_flag(ui.label_value, LV_OBJ_FLAG_HIDDEN);
-	// lv_label_set_text(ui.label_value, "Smart Home");
 	lv_meter_set_scale_ticks(ui.meter, ui.scale_pot, 73, 2, 0, lv_color_make(0xff, 0x00, 0x00));
 	lv_meter_set_scale_range(ui.meter, ui.scale_pot, 0, 72, 360, 270);
 }
@@ -59,7 +58,6 @@ char* HassView::GetEditedDeviceName(void)
 void HassView::ClearCtrView(lv_obj_t *obj)
 {
 	device_t *device = device_map[obj];
-	printf("on_off: %d, is_set_value: %d\n",device->is_on_off, device->is_set_value);
 
 	if (device->is_set_value) {
 		/*
@@ -123,15 +121,13 @@ void HassView::device_item_create(
 {
 
     lv_obj_t *cont = lv_obj_create(par);
-    // lv_obj_remove_style_all(cont);
-    // lv_obj_set_size(cont, 42, 62);
     lv_obj_clear_flag(cont, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_set_flex_flow(cont, LV_FLEX_FLOW_COLUMN);
 
     lv_obj_t *img = lv_img_create(cont);
     lv_img_set_src(img, Resource.GetImage(img_src));
-    // lv_obj_set_size(img, 42, 42);
+
     lv_obj_set_style_img_recolor_opa(img, LV_OPA_COVER, 0);
     lv_obj_set_style_img_recolor(img, lv_color_white(), 0);
 
@@ -156,8 +152,6 @@ void HassView::device_item_create(
 	item->is_on_off = is_on_off;
 	item->is_set_value = is_set_value;
 	device_map[cont] = item;
-    // lv_obj_add_event_cb(item->cont, on_event, LV_EVENT_ALL, NULL);
-	printf("create an item: %p\n", item);
 }
 
 void on_focus(lv_group_t* g)
@@ -179,7 +173,6 @@ void HassView::group_init(void)
 		lv_group_add_obj(m_ui->group, (m_ui->devices[i]).cont);
 	}
 	
-	// lv_group_focus_obj(m_ui->devices[0].cont);
 }
 
 void HassView::style_init(void)

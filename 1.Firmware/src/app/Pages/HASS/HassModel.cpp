@@ -16,7 +16,6 @@ void HassModel::GetKnobStatus(HassInfo* info)
 void HassModel::Init()
 {
 	PlaygroundModel::Init();
-	printf("HassModel: Init start\n");
 }
 
 void HassModel::Deinit()
