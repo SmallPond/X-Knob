@@ -24,6 +24,7 @@ namespace HAL
     void Init();
     void Update();
 
+    bool knob_check_long_pressed(int should_cnt);
     void knob_init();
     void knob_update(void);
     bool encoder_is_pushed(void);
