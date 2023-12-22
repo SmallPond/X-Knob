@@ -15,8 +15,7 @@ void HAL::Init()
         Serial.printf("lv_port_disp_init malloc failed!\n");
     knob_init();
     power_init();
-    if(! knob_check_long_pressed(1000))
-    {
+    if(! knob_check_long_pressed(1000)){
         power_off();
     }
     motor_init();
