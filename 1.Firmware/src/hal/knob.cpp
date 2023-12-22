@@ -68,3 +68,22 @@ void HAL::knob_init(void)
     // push_button.EventAttach(button_handler);
 
 }
+
+bool HAL::knob_check_long_pressed(int should_cnt)
+{
+    int press_cnt = 0;
+    for(int i = 0; i < should_cnt * 2; i++)
+    {
+        if (digitalRead(PUSH_BUTTON_PIN) == LOW)
+        {
+            press_cnt++;
+        }
+    }
+    if(press_cnt >= should_cnt)
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
