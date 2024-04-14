@@ -32,7 +32,6 @@
 
 #define LCD_BK_DEFAULT_BRIGHTNESS  50
 #define LCD_BK_DEFAULT_TIMEOUT     5
-#define DEBUG_PRINT                1
 
 
 #endif 

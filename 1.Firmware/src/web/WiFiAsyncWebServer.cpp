@@ -128,7 +128,8 @@ const char index_html[] PROGMEM = R"rawliteral(
 )rawliteral";
 
 //format bytes
-String formatBytes(size_t bytes) {
+String formatBytes(size_t bytes) 
+{
     if (bytes < 1024) {
         return String(bytes) + "B";
     } else if (bytes < (1024 * 1024)) {
@@ -140,7 +141,8 @@ String formatBytes(size_t bytes) {
     }
 }
 
-bool exists(String path) {
+bool exists(String path) 
+{
     bool yes = false;
     File file = FILESYSTEM.open(path, "r");
     if (!file.isDirectory()) {
@@ -150,7 +152,8 @@ bool exists(String path) {
     return yes;
 }
 
-String listFiles(bool ishtml) {
+String listFiles(bool ishtml)
+{
     // server.sendHeader("Connection", "close");
     String path = "/";
     Serial.println("handleFileList: " + path);
@@ -177,7 +180,8 @@ String listFiles(bool ishtml) {
     return output;
 }
 
-String processor(const String &var) {
+String processor(const String &var)
+{
     if (var == "FILELIST") {
         return listFiles(true);
     }
@@ -219,39 +223,8 @@ String processor(const String &var) {
 }
 
 
-void handleWiFiConfig(AsyncWebServerRequest *request) {
-    #if 0  //調試用
-    Serial.println("post wifi config");
-    Serial.println(request->args());
-    Serial.println(request->version());
-    Serial.println(request->method());
-    Serial.println(request->url());
-    Serial.println(request->host());
-    Serial.println(request->contentType());
-    Serial.println(request->contentLength());
-    Serial.println(request->multipart());
-
-    int headers = request->headers();
-    int i;
-    for(i=0;i<headers;i++){
-        AsyncWebHeader* h = request->getHeader(i);
-        Serial.printf("HEADER[%s]: %s\n", h->name().c_str(), h->value().c_str());
-        // 下面行功能同上面兩行
-        //Serial.printf("HEADER[%s]: %s\n", request->headerName(i).c_str(), request->header(i).c_str()); 
-    }
-    int params = request->params();
-    for(int i=0;i<params;i++){
-        AsyncWebParameter* p = request->getParam(i);
-        if(p->isFile()){ //p->isPost() is also true
-            Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
-        } else if(p->isPost()){
-            Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
-        } else { //GET
-            Serial.printf("GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
-        }
-    }
-    #endif
-    //  Serial.println(request->argName(0));     // get request argument name by number
+void handleWiFiConfig(AsyncWebServerRequest *request)
+{
     if (request->hasArg("wifi_name")) {
         const String wifi_name = request->arg("wifi_name");
         const String wifi_pass = request->arg("wifi_code");
@@ -266,7 +239,8 @@ void handleWiFiConfig(AsyncWebServerRequest *request) {
 }
 
 
-void handleMqttConfig(AsyncWebServerRequest *request) {
+void handleMqttConfig(AsyncWebServerRequest *request)
+{
     if (request->hasArg("host")) {
         const String host = request->arg("host");
         const String port = request->arg("port");
@@ -281,7 +255,9 @@ void handleMqttConfig(AsyncWebServerRequest *request) {
 }
 
 // handles updata 
-void handleUpdate(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+void handleUpdate(AsyncWebServerRequest *request, String filename, size_t index, 
+                            uint8_t *data, size_t len, bool final) 
+{
     String logmessage = "Client:" + request->client()->remoteIP().toString() + " " + request->url();
     Serial.println(logmessage);
     if (!index) {  
@@ -312,7 +288,8 @@ void handleUpdate(AsyncWebServerRequest *request, String filename, size_t index,
         ESP.restart();
     }
 }
-void configureWebServer() {
+void configureWebServer(void) 
+{
     server->on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     String logmessage = "Client:" + request->client()->remoteIP().toString() + +" " + request->url();
     Serial.println(logmessage);
@@ -330,14 +307,14 @@ void configureWebServer() {
 }
 
 
-void ffat_init() {
-
+void ffat_init(void) 
+{
     if (get_init_ffat()) {
     if (!FILESYSTEM.begin(FORMAT_FILESYSTEM_IF_FAILED, "/LFS")) {
         Serial.println("FFat Mount Failed");
         return;
     }
-    Serial.printf("FFAT啟動\n");
+    Serial.printf("FFAT starting...\n");
     Serial.printf("Total space: %10u\n", FILESYSTEM.totalBytes());
     Serial.printf("Free space: %10u\n", FILESYSTEM.freeBytes());
     File root = FILESYSTEM.open("/");
@@ -353,8 +330,8 @@ void ffat_init() {
     } else {
         FILESYSTEM.format();
         Serial.printf("ffat初始化成功\n");
-        set_init_ffat(1);  // 將數據保存到當前命名空間的"count"鍵中
-        Serial.printf("重啟ESP32\n");
+        set_init_ffat(1);
+        Serial.printf("restarting ESP32..\n");
         ESP.restart();
         }
     }
@@ -365,7 +342,8 @@ void clear_wifi_name()
     set_wifi_config("","");
 }
 
-void wifi_server_begin(void *parameter) {
+void wifi_server_begin(void *parameter)
+{
     // put your setup code here, to run once:
     close_server_flag = false;
     char wifi_mode;
@@ -379,10 +357,8 @@ void wifi_server_begin(void *parameter) {
     sprintf(mac_tmp, "ESP32-%c%c%c%c%c%c", mac_tmp[4], mac_tmp[5], mac_tmp[2], mac_tmp[3], mac_tmp[0], mac_tmp[1]);
     WiFi.mode(WIFI_AP);
     while (!WiFi.softAP(ssid, "")) {};
-    #if DEBUG_PRINT
-        printf("AP start success\n");
-        printf("ip:%s\n", WiFi.softAPIP().toString().c_str());
-    #endif
+    log_i("AP start success\n");
+    log_i("ip:%s\n", WiFi.softAPIP().toString().c_str());
     lv_label_set_text(ui_wifi_label, ("AP:" + WiFi.softAPIP().toString()).c_str());
   
     MDNS.begin(host);
@@ -390,32 +366,29 @@ void wifi_server_begin(void *parameter) {
 
 
     // configure web server
-    #if DEBUG_PRINT
-      printf("\nConfiguring Webserver ...\n");
-    #endif
+    log_d("\nConfiguring Webserver ...\n");
+
     server = new AsyncWebServer(default_webserverporthttp);
     configureWebServer();
 
     // startup web server
-    #if DEBUG_PRINT
-      printf("Starting Webserver ...\n");
-    #endif
+    log_d("Starting Webserver ...\n");
+    
     server->begin();
     while (1) {
-      vTaskDelay(1);
-      if(close_server_flag){
-        server->end();
-        delete server;
-        break;
-      }
+        vTaskDelay(1);
+        if(close_server_flag){
+            server->end();
+            delete server;
+            break;
+        }
     }
-    #if DEBUG_PRINT
-      printf("Stop Webserver ...\n");
-    #endif
+    log_d("Stop Webserver ...\n");
+    
     //WiFi.disconnect();
     //WiFi.mode(WIFI_OFF);
     while (1) {
-      vTaskDelay(10);
+        vTaskDelay(10);
     }
 }
 

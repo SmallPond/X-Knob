@@ -106,27 +106,23 @@ void Setting::onTimerUpdate(lv_timer_t* timer)
 
 void Setting::SetWiFiTaskState(bool enable){
     if (enable) {
-        #if DEBUG_PRINT
-            printf("enable WiFi Task\n");
-        #endif
+        log_d("enable WiFi Task\n");
         wifi_task_param.ui_wifi_label = View->m_ui->wifi_label;
         xTaskCreatePinnedToCore(
             wifi_server_begin,
-            "wifi_server_begin", // 任務名稱. 
-            8192,                // 任務的堆棧大小 
-            &wifi_task_param,         // 任務的參數 
-            4,                   // 任務的優先級 
-            &handleTaskWiFi,     //跟蹤創建的任務的任務句柄 
-            ESP32_RUNNING_CORE   // pin任務到核心1
+            "wifi_server_begin",
+            8192,
+            &wifi_task_param,        
+            4,
+            &handleTaskWiFi, 
+            ESP32_RUNNING_CORE
     ); 
     } else {
         close_server();
         vTaskDelay(4);
         if (handleTaskWiFi != NULL){
             //vTaskSuspend(handleTaskWiFi);  //暂停执行
-            #if DEBUG_PRINT
-                printf("disable WiFi Task\n");
-            #endif
+            log_d("disable WiFi Task\n");
             vTaskDelete(handleTaskWiFi);
             handleTaskWiFi = NULL;
         }
@@ -160,34 +156,26 @@ void Setting::SettingEventHandler(lv_event_t* event, lv_event_code_t code)
             } else {
                 lv_obj_add_state(obj, LV_STATE_EDITED);
             }
-            ((SettingView*)View)->SetCtrView(obj);  //選擇UI
+            ((SettingView*)View)->SetCtrView(obj);
             switch(((SettingView*)View)->GetViewMode()){
                 case DEFAULT_VIEW:
-                    #if DEBUG_PRINT
-                        printf("select DEFAULT_VIEW \n");
-                    #endif
+                    log_d("select DEFAULT_VIEW \n");
                 case WIFI_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("select WIFI_SETTING_VIEW \n");
-                    #endif
+                    log_d("select WIFI_SETTING_VIEW \n");
                     SetWiFiTaskState(true);
                     HAL::encoder_disable();
                     View->SetPlaygroundMode(WIFI_SETTING_VIEW);
                     Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
                     break;
                 case LCD_BK_TIMEOUT_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("select LCD_BK_TIMEOUT_SETTING_VIEW \n");
-                    #endif
+                    log_d("select LCD_BK_TIMEOUT_SETTING_VIEW \n");
                     HAL::encoder_disable();
                     View->SetPlaygroundMode(LCD_BK_TIMEOUT_SETTING_VIEW);
                     Model->SetPlaygroundMode(SETTING_MODE_LCD_BK_TIMEOUT);
                     Model->ChangeMotorModeWithInitPosition(MOTOR_BOUND_LCD_BK_TIMEOUT, Model->knob_value );
                     break;
                 case LCD_BK_BRIGHTNESS_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("select LCD_BK_BRIGHTNESS_SETTING_VIEW \n");
-                    #endif
+                    log_d("select LCD_BK_BRIGHTNESS_SETTING_VIEW \n");
                     HAL::encoder_disable();
                     View->SetPlaygroundMode(LCD_BK_BRIGHTNESS_SETTING_VIEW);
                     Model->SetPlaygroundMode(SETTING_MODE_LCD_BK_BRIGHTNESS);
@@ -197,32 +185,24 @@ void Setting::SettingEventHandler(lv_event_t* event, lv_event_code_t code)
         } else {
             switch(((SettingView*)View)->GetViewMode()){
                 case DEFAULT_VIEW:
-                    #if DEBUG_PRINT
-                        printf("Enter DEFAULT_VIEW \n");
-                    #endif
+                        log_d("Enter DEFAULT_VIEW \n");
                 case WIFI_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("Enter WIFI_SETTING_VIEW Press\n");
-                    #endif
+                    log_d("Enter WIFI_SETTING_VIEW Press\n");
                     break;
                 case LCD_BK_TIMEOUT_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("Enter LCD_BK_TIMEOUT_SETTING_VIEW Press\n");
-                    #endif
+                    log_d("Enter LCD_BK_TIMEOUT_SETTING_VIEW Press\n");
                     Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
                     Model->SaveLcdBkTimeout(info.xkonb_value);
                     ((SettingView*)View)->ClearCtrView(obj);
-                    View->SetPlaygroundMode(app_mode);  //關閉顯示數值
+                    View->SetPlaygroundMode(app_mode);
                     lv_obj_clear_state(obj, LV_STATE_EDITED);
                     HAL::encoder_enable();
                     break;
                 case LCD_BK_BRIGHTNESS_SETTING_VIEW:
-                    #if DEBUG_PRINT
-                        printf("Enter LCD_BK_BRIGHTNESS_SETTING_VIEW Press\n");
-                    #endif
+                    log_d("Enter LCD_BK_BRIGHTNESS_SETTING_VIEW Press\n");
                     Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
                     Model->SaveLcdBkBrightness(info.xkonb_value);
-                    View->SetPlaygroundMode(app_mode);  //關閉顯示數值
+                    View->SetPlaygroundMode(app_mode);
                     View->ClearCtrView(obj);
                     lv_obj_clear_state(obj, LV_STATE_EDITED);
                     HAL::encoder_enable();
@@ -236,7 +216,7 @@ void Setting::SettingEventHandler(lv_event_t* event, lv_event_code_t code)
             SetWiFiTaskState(false);
             lv_obj_clear_state(obj, LV_STATE_EDITED);
             HAL::encoder_enable();
-            View->SetPlaygroundMode(app_mode);  //關閉顯示數值
+            View->SetPlaygroundMode(app_mode);
             Model->ChangeMotorMode(MOTOR_UNBOUND_COARSE_DETENTS);
         }
     } else if (code == LV_EVENT_LONG_PRESSED_REPEAT) {

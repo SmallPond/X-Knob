@@ -118,9 +118,7 @@ void HAL::mqtt_init(void) {
     
     get_mqtt_config(host,port,username,password,topic);
     sprintf(mqtt_host, "%s" , host.c_str());
-    #if DEBUG_PRINT
-        printf("MQTT connect host |%s|:|%d|\n" , mqtt_host , port );
-    #endif
+    log_d("MQTT connect host |%s|:|%d|\n" , mqtt_host , port );
     mqtt_client.setServer(mqtt_host, port);
 
     mqtt_client.setCallback(mqttCallback);
